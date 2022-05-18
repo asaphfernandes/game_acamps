@@ -16,9 +16,12 @@ namespace Api.Controllers.Provas.Create
 
     public async Task CreateAsync(RequestViewModel viewModel, CancellationToken cancellationToken)
     {
-      var prova = new Prova(viewModel.Name);
+      if (!string.IsNullOrEmpty(viewModel.Name))
+      {
+        var prova = new Prova(viewModel.Name);
 
-      await Context.Set<Prova>().InsertOneAsync(prova, cancellationToken: cancellationToken);
+        await Context.Set<Prova>().InsertOneAsync(prova, cancellationToken: cancellationToken);
+      }
     }
   }
 }

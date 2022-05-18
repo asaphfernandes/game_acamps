@@ -13,6 +13,7 @@ namespace Api.Middlewares
       #region Controller
 
       services.AddScoped<Controllers.Provas.Create.Service>();
+      services.AddScoped<Controllers.Provas.Delete.Service>();
 
       #endregion
 
