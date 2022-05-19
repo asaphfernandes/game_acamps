@@ -9,12 +9,16 @@ import CompetirEquipeView from './competir/equipe';
 import CompetirCronometroView from './competir/cronometro';
 
 const HomeView: React.FC = () => {
+  const opcoes = ["Competir", "Resultado", "Equipe", "Prova"];
   return (<Container>
-    <ul>
-      <li><Link to='/competir'>Competir</Link></li>
-      <li><Link to='/resultado'>Resultado</Link></li>
-      <li><Link to='/equipe'>Equipes</Link></li>
-      <li><Link to='/prova'>Provas</Link></li>
+    <ul style={{ listStyle: "none" }}>
+      {opcoes.map(opcao => {
+        return (<li key={opcao} style={{ margin: 50 }}>
+          <Link to={`/${opcao}`} style={{ fontSize: 18, padding: 10, textDecoration: "none", border: "1px solid red" }}>
+            {opcao}
+          </Link>
+        </li>)
+      })}
     </ul>
   </Container>);
 };
