@@ -1,21 +1,16 @@
-import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-interface IModel {
-    id: string;
-    name: string;
-}
+import { api, IProvaModel, LS } from '../utils';
 
 const ProvaView: React.FC = () => {
-    const [models, setModels] = React.useState<IModel[]>([]);
+    const [models, setModels] = React.useState<IProvaModel[]>([]);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const load = React.useCallback(() => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .get('/api/prova')
+        api.get('/api/prova')
             .then((response) => {
+                localStorage.setItem(LS.PROVAS, JSON.stringify(response.data));
                 setModels(response.data);
             });
     }, []);
@@ -31,8 +26,7 @@ const ProvaView: React.FC = () => {
 
     const handleCreate = React.useCallback(() => {
         if (inputRef.current) {
-            axios.create({ baseURL: 'https://localhost:61392' })
-                .post('/api/prova', {
+            api.post('/api/prova', {
                     name: inputRef.current.value
                 })
                 .then((response) => {
@@ -42,8 +36,7 @@ const ProvaView: React.FC = () => {
     }, [load]);
 
     const handleDelete = React.useCallback((id: string) => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .delete(`/api/prova/${id}`)
+        api.delete(`/api/prova/${id}`)
             .then((response) => {
                 load();
             });

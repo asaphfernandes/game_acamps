@@ -1,37 +1,28 @@
-import axios from 'axios';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-
-interface IModel {
-    id: string;
-    name: string;
-}
-
-const LS_PROVA = 'prova';
+import { IProvaModel, LS } from '../utils';
 
 const CompetirView: React.FC = () => {
     const history = useHistory();
-    const [models, setModels] = React.useState<IModel[]>([]);
 
     React.useEffect(() => {
-        const provaStorage = localStorage.getItem(LS_PROVA);
+        const provaStorage = localStorage.getItem(LS.PROVA);
         if (provaStorage) {
             history.push(`/competir/equipe`);
         }
     }, [history])
 
-    const load = React.useCallback(() => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .get('/api/prova')
-            .then((response) => {
-                setModels(response.data);
-            });
+    const models = React.useMemo(() => {
+        const provasStorage = localStorage.getItem(LS.PROVAS);
+        if (provasStorage) {
+            return JSON.parse(provasStorage) as IProvaModel[];
+        }
+        return new Array<IProvaModel>();
     }, []);
-    React.useEffect(load, [load]);
 
     const handleChange = React.useCallback((id: string) => {
         var m = models.filter(w => w.id === id)[0];
-        localStorage.setItem(LS_PROVA, JSON.stringify(m));
+        localStorage.setItem(LS.PROVA, JSON.stringify(m));
         history.push(`/competir/equipe`);
     }, [history, models]);
 

@@ -1,25 +1,12 @@
-import axios from 'axios';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-
-interface IProvaModel {
-    id: string;
-    name: string;
-}
-
-interface IEquipeModel {
-    id: string;
-    name: string;
-    sort: number
-}
+import { IEquipeModel, IProvaModel, LS } from '../utils';
 
 interface IEquipeProps {
     models: IEquipeModel[];
     model?: IEquipeModel;
     setModel: (model?: IEquipeModel) => void;
 }
-
-const LS_PROVA = 'prova';
 
 const Equipe: React.FC<IEquipeProps> = ({
     models, model, setModel
@@ -54,12 +41,11 @@ const Equipe: React.FC<IEquipeProps> = ({
 const CompetirEquipeView: React.FC = () => {
     const history = useHistory();
 
-    const [models, setModels] = React.useState<IEquipeModel[]>([]);
     const [modelPar, setModelPar] = React.useState<IEquipeModel>();
     const [modelImpar, setModelImpar] = React.useState<IEquipeModel>();
 
     const model = React.useMemo(() => {
-        const provaStorage = localStorage.getItem(LS_PROVA);
+        const provaStorage = localStorage.getItem(LS.PROVA);
         if (provaStorage) {
             const prova = JSON.parse(provaStorage);
             return prova as IProvaModel;
@@ -67,17 +53,21 @@ const CompetirEquipeView: React.FC = () => {
         return { name: '[SEM PROVA]', id: '' } as IProvaModel;
     }, []);
 
-    const load = React.useCallback(() => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .get('/api/equipe')
-            .then((response) => {
-                setModels(response.data);
-            });
+    const models = React.useMemo(() => {
+        const provasStorage = localStorage.getItem(LS.EQUIPES);
+        if (provasStorage) {
+            return JSON.parse(provasStorage) as IEquipeModel[];
+        }
+        return new Array<IEquipeModel>();
     }, []);
-    React.useEffect(load, [load]);
 
     const handleStart = React.useCallback(() => {
         history.push('/competir/cronometro');
+    }, [history]);
+
+    const handleMudarProva = React.useCallback(() => {
+        localStorage.removeItem(LS.PROVA);
+        history.push('/competir');
     }, [history]);
 
     return (<>
@@ -101,7 +91,7 @@ const CompetirEquipeView: React.FC = () => {
             <button>Transmitir</button>
         </div>
         <div>
-            <button>Mudar prova</button>
+            <button onClick={handleMudarProva} >Mudar prova</button>
         </div>
     </>);
 };

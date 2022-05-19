@@ -1,21 +1,16 @@
-import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-interface IModel {
-    id: string;
-    name: string;
-}
+import { api, IEquipeModel, LS } from '../utils';
 
 const EquipeView: React.FC = () => {
-    const [models, setModels] = React.useState<IModel[]>([]);
+    const [models, setModels] = React.useState<IEquipeModel[]>([]);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const load = React.useCallback(() => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .get('/api/equipe')
+        api.get('/api/equipe')
             .then((response) => {
+                localStorage.setItem(LS.EQUIPES, JSON.stringify(response.data));
                 setModels(response.data);
             });
     }, []);
@@ -30,8 +25,7 @@ const EquipeView: React.FC = () => {
     React.useEffect(load, [load]);
 
     const handleSortear = React.useCallback(() => {
-        axios.create({ baseURL: 'https://localhost:61392' })
-            .post(`/api/equipe/sortear`)
+        api.post(`/api/equipe/sortear`)
             .then((response) => {
                 load();
             });
