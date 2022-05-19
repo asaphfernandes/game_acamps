@@ -5,6 +5,8 @@ import CompetirView from './competir';
 import ResultadoView from './resultado';
 import EquipeView from './equipe';
 import ProvaView from './prova';
+import CompetirEquipeView from './competir/equipe';
+import CompetirCronometroView from './competir/cronometro';
 
 const HomeView: React.FC = () => {
   return (<Container>
@@ -23,6 +25,8 @@ const App: React.FC = () => {
       <Switch>
         <Route exact path='/' component={HomeView} />
         <Route exact path='/competir' component={CompetirView} />
+        <Route exact path='/competir/equipe' component={CompetirEquipeView} />
+        <Route exact path='/competir/cronometro' component={CompetirCronometroView} />
         <Route exact path='/resultado' component={ResultadoView} />
         <Route exact path='/equipe' component={EquipeView} />
         <Route exact path='/prova' component={ProvaView} />
