@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { IProvaModel, LS } from '../utils';
+import { IProvaModel, IResultadoModel, LS } from '../utils';
 
 const CompetirView: React.FC = () => {
     const history = useHistory();
@@ -23,6 +23,14 @@ const CompetirView: React.FC = () => {
     const handleChange = React.useCallback((id: string) => {
         var m = models.filter(w => w.id === id)[0];
         localStorage.setItem(LS.PROVA, JSON.stringify(m));
+
+        const resultado: IResultadoModel = {
+            provaId: id,
+            equipes: []
+        };
+
+        localStorage.setItem(LS.RESULTADO, JSON.stringify(resultado));
+
         history.push(`/competir/equipe`);
     }, [history, models]);
 
