@@ -18,7 +18,7 @@ const HomeView: React.FC = () => {
         </Link>
       </li>
       {opcoes.map(opcao => {
-        return (<li key={opcao} style={{ width: 248, textAlign: "center", fontSize: 48, marginBottom: 25, border: "1px solid #546E7A", borderRadius: 5 }}>
+        return (<li key={opcao} style={{ width: 248, textAlign: "center", fontSize: 48, marginBottom: 25, background: "white", border: "1px solid #546E7A", borderRadius: 5 }}>
           <Link to={`/${opcao}`} style={{ textDecoration: "none", color: "#546E7A", width: "100%" }}>
             {opcao}
           </Link>

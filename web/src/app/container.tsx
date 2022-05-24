@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: '#eee',
+  backgroundColor: '#fff',
   height: '100%',
   alignItems: "center",
   justifyContent: "center",
