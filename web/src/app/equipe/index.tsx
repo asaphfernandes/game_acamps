@@ -35,17 +35,17 @@ const EquipeView: React.FC = () => {
         <h1>
             <Link to='/'>Voltar</Link> / Equipe
         </h1>
-        <ul>
+        <ul style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}>
             {models.map((model) => {
-                return (<li key={model.id} >
+                return (<li key={model.id} style={{ width: "40%", margin: 10 }}>
                     <input value={model.name} />
                     <button>Salvar</button>
                 </li>)
             })}
-            <li>
-                <button onClick={handleSortear}>Sortear</button>
-            </li>
         </ul>
+        <div style={{ marginLeft: 10, marginTop: 30 }}>
+            <button onClick={handleSortear} style={{ fontSize: 24, backgroundColor: "#546E7A", borderRadius: 5, width: "15%" }}>Sortear</button>
+        </div>
     </>);
 };
 
