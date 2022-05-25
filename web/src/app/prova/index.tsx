@@ -27,15 +27,16 @@ const ProvaView: React.FC = () => {
     const handleCreate = React.useCallback(() => {
         if (inputRef.current) {
             api.post('/api/prova', {
-                    name: inputRef.current.value
-                })
+                name: inputRef.current.value
+            })
                 .then((response) => {
                     load();
                 });
         }
     }, [load]);
 
-    const handleDelete = React.useCallback((id: string) => {
+    const handleDelete = React.useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        const { id } = event.currentTarget;
         api.delete(`/api/prova/${id}`)
             .then((response) => {
                 load();
@@ -46,16 +47,18 @@ const ProvaView: React.FC = () => {
         <h1>
             <Link to='/'>Voltar</Link> / Prova
         </h1>
-        <ul>
+        <ul style={{ display: "flex", flexDirection: 'row', listStyle: "none" }}>
             {models.map((model) => {
-                return (<li key={model.id} >
-                    {model.name}
-                    <button onClick={() => { handleDelete(model.id); }}>Delete</button>
+                return (<li key={model.id} style={{ margin: 10 }}>
+                    <span>
+                        {model.name}
+                    </span>
+                    <button id={model.id} onClick={handleDelete}> Delete</button>
                 </li>)
             })}
-            <li>
-                <input ref={inputRef} />
-                <button onClick={handleCreate}>Add</button>
+            <li style={{ margin: 10 }}>
+                <input ref={inputRef} placeholder="Prova" width={200} style={{ marginRight: 2 }} />
+                <button onClick={handleCreate} style={{ padding: 0, borderRadius: "50%", height: 25, width: 25, fontSize: 20, alignItems: "center", justifyContent: 'center' }}>+</button>
             </li>
         </ul>
     </>);
