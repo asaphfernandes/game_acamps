@@ -18,15 +18,15 @@ const Cronometro: React.FC<ICronometroProps> = ({
         if (resultadoStorage) {
             const resultado = JSON.parse(resultadoStorage) as IResultadoModel;
 
-            const equipe = resultado.equipes.filter(w => w.equipeId === model.id)[0];
+            const equipe = resultado.equipes.filter(w => w.id === model.id)[0];
 
             if (equipe) {
-                ++equipe.punicaoSegundos
+                ++equipe.penalidadeSeconds
             } else {
                 resultado.equipes.push({
-                    equipeId: model.id,
-                    punicaoSegundos: 1,
-                    tempoMilisegundos: 0
+                    id: model.id,
+                    penalidadeSeconds: 1,
+                    timeMiliseconds: 0
                 });
             }
 
@@ -40,17 +40,17 @@ const Cronometro: React.FC<ICronometroProps> = ({
         if (resultadoStorage) {
             const resultado = JSON.parse(resultadoStorage) as IResultadoModel;
 
-            const equipe = resultado.equipes.filter(w => w.equipeId === model.id)[0];
+            const equipe = resultado.equipes.filter(w => w.id === model.id)[0];
 
             const diff = calcDiff(start, new Date());
 
             if (equipe) {
-                equipe.tempoMilisegundos = diff;
+                equipe.timeMiliseconds = diff;
             } else {
                 resultado.equipes.push({
-                    equipeId: model.id,
-                    punicaoSegundos: 0,
-                    tempoMilisegundos: diff
+                    id: model.id,
+                    penalidadeSeconds: 0,
+                    timeMiliseconds: diff
                 });
             }
 

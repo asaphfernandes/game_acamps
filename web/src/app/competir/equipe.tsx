@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { IEquipeModel, IProvaModel, IResultadoModel, LS } from '../utils';
+import { api, IEquipeModel, IProvaModel, IResultadoModel, LS } from '../utils';
 
 interface IEquipeProps {
     resultado: IResultadoModel;
@@ -29,7 +29,7 @@ const Equipe: React.FC<IEquipeProps> = ({
     } else {
         return (<ul>
             {models.map((model) => {
-                const disabled = resultado.equipes.findIndex(w => w.equipeId === model.id) > -1;
+                const disabled = resultado.equipes.findIndex(w => w.id === model.id) > -1;
                 return (<li key={model.id}>
                     <button disabled={disabled} onClick={() => { handleModel(model); }}>
                         {model.sort} - {model.name}
@@ -61,7 +61,7 @@ const CompetirEquipeView: React.FC = () => {
             const resultado = JSON.parse(resultadoStorage);
             return resultado as IResultadoModel;
         }
-        return { provaId: '', equipes: [] } as IResultadoModel;
+        return { id: '', equipes: [] } as IResultadoModel;
     }, []);
 
     const models = React.useMemo(() => {
@@ -83,6 +83,17 @@ const CompetirEquipeView: React.FC = () => {
         history.push('/competir');
     }, [history]);
 
+    const handleTransmitir = React.useCallback(() => {
+        var resultadoStorage = localStorage.getItem(LS.RESULTADO);
+        if (resultadoStorage) {
+            var request = JSON.parse(resultadoStorage);
+            api.post('/api/resultado/transmitir', request)
+                .then((response) => {
+                    handleMudarProva();
+                });
+        }
+    }, [handleMudarProva]);
+
     return (<>
         <h1>
             <Link to='/'>Voltar</Link> / Competir {model.name}
@@ -103,7 +114,7 @@ const CompetirEquipeView: React.FC = () => {
 
         <hr />
         <div>
-            <button>Transmitir</button>
+            <button onClick={handleTransmitir}>Transmitir</button>
         </div>
         <div>
             <button onClick={handleMudarProva} >Mudar prova</button>

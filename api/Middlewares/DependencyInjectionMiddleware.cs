@@ -15,6 +15,7 @@ namespace Api.Middlewares
       services.AddScoped<Controllers.Equipes.Sortear.Service>();
       services.AddScoped<Controllers.Provas.Create.Service>();
       services.AddScoped<Controllers.Provas.Delete.Service>();
+      services.AddScoped<Controllers.Resultados.Transmitir.Service>();
 
       #endregion
 

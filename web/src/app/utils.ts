@@ -26,14 +26,26 @@ export interface IEquipeModel {
 };
 
 export interface IEquipeResultadoModel {
-    equipeId: string;
-    punicaoSegundos: number;
-    tempoMilisegundos: number;
+    id: string;
+    penalidadeSeconds: number;
+    timeMiliseconds: number;
 }
 
 export interface IResultadoModel {
-    provaId: string;
+    id: string;
     equipes: IEquipeResultadoModel[];
+}
+
+export interface IRankEquipeModel {
+    name: string;
+    penalidade: string;
+    diferenca: string;
+    total: string;
+}
+
+export interface IRankModel {
+    lastChange: string;
+    equipes: IRankEquipeModel[]
 }
 
 export const calcDiff = (start: Date, end: Date): number => {

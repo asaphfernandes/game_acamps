@@ -25,7 +25,7 @@ const CompetirView: React.FC = () => {
         localStorage.setItem(LS.PROVA, JSON.stringify(m));
 
         const resultado: IResultadoModel = {
-            provaId: id,
+            id: id,
             equipes: []
         };
 
