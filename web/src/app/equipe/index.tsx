@@ -37,8 +37,8 @@ const EquipeView: React.FC = () => {
 
         <ContainerJss>
             {models.map((model) => {
-                return (<EquipeJss key={model.id} style={{ width: "40%", margin: 10 }}>
-                    <input value={model.name} />
+                return (<EquipeJss key={model.id}>
+                    <input ref={inputRef} defaultValue={model.name} />
                     <button>Salvar</button>
                 </EquipeJss>)
             })}

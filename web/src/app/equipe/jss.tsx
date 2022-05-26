@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-export const ContainerJss = styled('ul')({
+export const ContainerJss = styled('ol')({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
