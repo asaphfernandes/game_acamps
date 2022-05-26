@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import {  useHistory } from 'react-router-dom';
+import Topbar from '../ui/topbar';
 import { IProvaModel, IResultadoModel, LS } from '../utils';
 
 const CompetirView: React.FC = () => {
@@ -35,9 +36,7 @@ const CompetirView: React.FC = () => {
     }, [history, models]);
 
     return (<>
-        <h1>
-            <Link to='/'>Voltar</Link> / Competir
-        </h1>
+        <Topbar title='Competir' />
         <ul>
             {models.map((model) => {
                 return (<li key={model.id} >

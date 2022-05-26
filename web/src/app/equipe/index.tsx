@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Topbar from '../ui/topbar';
 import { api, IEquipeModel, LS } from '../utils';
+import { ContainerJss, EquipeJss } from './jss';
 
 const EquipeView: React.FC = () => {
     const [models, setModels] = React.useState<IEquipeModel[]>([]);
@@ -32,17 +33,16 @@ const EquipeView: React.FC = () => {
     }, [load]);
 
     return (<>
-        <h1>
-            <Link to='/'>Voltar</Link> / Equipe
-        </h1>
-        <ul style={{ display: "flex", flexWrap: "wrap", flexDirection: "row" }}>
+        <Topbar title='Equipe' />
+
+        <ContainerJss>
             {models.map((model) => {
-                return (<li key={model.id} style={{ width: "40%", margin: 10 }}>
+                return (<EquipeJss key={model.id} style={{ width: "40%", margin: 10 }}>
                     <input value={model.name} />
                     <button>Salvar</button>
-                </li>)
+                </EquipeJss>)
             })}
-        </ul>
+        </ContainerJss>
         <div style={{ marginLeft: 10, marginTop: 30 }}>
             <button onClick={handleSortear} style={{ fontSize: 24, backgroundColor: "#546E7A", borderRadius: 5, width: "15%" }}>Sortear</button>
         </div>

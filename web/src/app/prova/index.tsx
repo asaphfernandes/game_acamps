@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Topbar from '../ui/topbar';
 import { api, IProvaModel, LS } from '../utils';
+import { ContainerJss, ProvaJss } from './jss';
 
 const ProvaView: React.FC = () => {
     const [models, setModels] = React.useState<IProvaModel[]>([]);
@@ -27,8 +28,8 @@ const ProvaView: React.FC = () => {
     const handleCreate = React.useCallback(() => {
         if (inputRef.current) {
             api.post('/api/prova', {
-                    name: inputRef.current.value
-                })
+                name: inputRef.current.value
+            })
                 .then((response) => {
                     load();
                 });
@@ -43,21 +44,19 @@ const ProvaView: React.FC = () => {
     }, [load]);
 
     return (<>
-        <h1>
-            <Link to='/'>Voltar</Link> / Prova
-        </h1>
-        <ul>
+        <Topbar title='Prova' />
+        <ContainerJss>
             {models.map((model) => {
-                return (<li key={model.id} >
+                return (<ProvaJss key={model.id} >
                     {model.name}
                     <button onClick={() => { handleDelete(model.id); }}>Delete</button>
-                </li>)
+                </ProvaJss>)
             })}
-            <li>
-                <input ref={inputRef} />
+            <ProvaJss>
+                <input ref={inputRef} placeholder='Nome prova' />
                 <button onClick={handleCreate}>Add</button>
-            </li>
-        </ul>
+            </ProvaJss>
+        </ContainerJss>
     </>);
 };
 

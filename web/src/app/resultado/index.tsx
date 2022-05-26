@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Topbar from '../ui/topbar';
 import { api, IRankEquipeModel, IRankModel } from '../utils';
 
 const ResultadoView: React.FC = () => {
@@ -22,9 +22,8 @@ const ResultadoView: React.FC = () => {
     const equipe3: IRankEquipeModel | undefined = model.equipes.length >= 3 ? model.equipes[2] : undefined;
 
     return (<>
-        <h1>
-            <Link to='/'>Voltar</Link> / Resultado <small style={{fontSize: '.5em'}} >{model.lastChange}</small>
-        </h1>
+        <Topbar title='Resultado' subtitle={model.lastChange} />
+
         {equipe1
             && equipe2
             && equipe3
