@@ -11,12 +11,14 @@ export const LS = {
     EQUIPE_2: 'equipe_2'
 };
 
-export const api = axios.create({ baseURL: 'https://localhost:61392' })
+export const api = axios.create({ baseURL: 'http://192.168.0.36:61393' })
 
 
 export interface IProvaModel {
     id: string;
     name: string;
+    punicao: string;
+    bonus: string;
 };
 
 export interface IEquipeModel {

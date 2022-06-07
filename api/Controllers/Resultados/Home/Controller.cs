@@ -35,7 +35,7 @@ namespace Api.Controllers.Resultados.Home
         LastChange = $"{resultado.LastChange}",
         Equipes = resultado.Equipes.Select(s => new
         {
-          equipes.Single(w => w.Id == s.Id).Name,
+          s.Name,
           Penalidde = $"{s.PenalidadeSeconds:00}s",
           Diferenca = "",
           Total = $"{new System.TimeOnly(s.TotalMiliseconds * 10000):HH:mm:ss.ffff}"

@@ -11,6 +11,7 @@ namespace Api.Controllers.Resultados.Transmitir
     public class SubEquipe
     {
       public Guid Id { get; set; }
+      public string Name { get; set; }
       public int PenalidadeSeconds { get; set; }
       public int TimeMiliseconds { get; set; }
     }

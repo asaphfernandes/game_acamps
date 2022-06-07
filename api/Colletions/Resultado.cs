@@ -32,8 +32,8 @@ namespace Api.Colletions
     {
       var equipes = Provas
         .SelectMany(s => s.Equipes)
-        .GroupBy(g => g.Id)
-        .Select(s => new SubEquipe(s.Key)
+        .GroupBy(g => new { g.Id, g.Name })
+        .Select(s => new SubEquipe(s.Key.Id, s.Key.Name)
         {
           PenalidadeSeconds = s.Sum(s => s.PenalidadeSeconds),
           TimeMiliseconds = s.Sum(s => s.TimeMiliseconds)
@@ -45,7 +45,7 @@ namespace Api.Colletions
 
         if (equipe2 == null)
         {
-          equipe2 = new SubEquipe(equipe.Id);
+          equipe2 = new SubEquipe(equipe.Id, equipe.Name);
           Equipes.Add(equipe2);
         }
 
@@ -73,7 +73,7 @@ namespace Api.Colletions
 
           if (equipe2 == null)
           {
-            equipe2 = new SubEquipe(equipe.Id);
+            equipe2 = new SubEquipe(equipe.Id, equipe.Name);
             Equipes.Add(equipe);
           }
 
@@ -85,14 +85,16 @@ namespace Api.Colletions
     public class SubEquipe
     {
       public Guid Id { get; set; }
+      public string Name { get; set; }
       public int PenalidadeSeconds { get; set; }
       public int TimeMiliseconds { get; set; }
 
       public int TotalMiliseconds { get; set; }
 
-      public SubEquipe(Guid id)
+      public SubEquipe(Guid id, string name)
       {
         Id = id;
+        Name = name;
       }
 
       public void Update(SubEquipe equipe)

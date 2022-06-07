@@ -15,7 +15,7 @@ namespace Api.Controllers.Provas.Create
     {
       if (!string.IsNullOrEmpty(viewModel.Name))
       {
-        var prova = new Prova(viewModel.Name);
+        var prova = new Prova(viewModel.Name, viewModel.Punicao, viewModel.Bonus);
 
         await Context.Set<Prova>().InsertOneAsync(prova, cancellationToken: cancellationToken);
 

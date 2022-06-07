@@ -29,7 +29,7 @@ namespace Api.Controllers.Resultados.Transmitir
       resultado.AddProva(new Resultado.SubProva(viewModel.Id)
       {
         Equipes = viewModel.Equipes
-        .Select(s => new Resultado.SubEquipe(s.Id)
+        .Select(s => new Resultado.SubEquipe(s.Id, s.Name)
         {
           PenalidadeSeconds = s.PenalidadeSeconds,
           TimeMiliseconds = s.TimeMiliseconds
