@@ -6,7 +6,7 @@ export const ButtonJss = styled('button')({
     borderRadius: 5,
     
 }, (props: IButtonUiProps) => {
-    if (props.variant === 'secondery') {
+    if (props.variant === 'secondary') {
         return {
             background: '#FFFFFF',
             color: '#546E7A',

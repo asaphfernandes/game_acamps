@@ -1,7 +1,9 @@
 import React from 'react';
 import {  useHistory } from 'react-router-dom';
+import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
 import { IProvaModel, IResultadoModel, LS } from '../utils';
+import { ProvaJss } from './jss';
 
 const CompetirView: React.FC = () => {
     const history = useHistory();
@@ -37,13 +39,11 @@ const CompetirView: React.FC = () => {
 
     return (<>
         <Topbar title='Competir' />
-        <ul>
+        <ProvaJss>
             {models.map((model) => {
-                return (<li key={model.id} >
-                    <button onClick={() => { handleChange(model.id); }}>{model.name}</button>
-                </li>)
+                return (<ButtonUi key={model.id} onClick={() => { handleChange(model.id); }}>{model.name}</ButtonUi>)
             })}
-        </ul>
+        </ProvaJss>
     </>);
 };
 

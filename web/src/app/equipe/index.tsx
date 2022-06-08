@@ -1,12 +1,45 @@
 import React from 'react';
+import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
 import { api, IEquipeModel, LS } from '../utils';
 import { ContainerJss, EquipeJss } from './jss';
 
+interface IEquipeProps {
+    model: IEquipeModel;
+    onReload: () => void;
+}
+
+const Equipe: React.FC<IEquipeProps> = ({
+    model, onReload
+}) => {
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleEdit = React.useCallback(() => {
+        let request: any = {
+            id: model.id
+        };
+
+        if (inputRef.current) {
+            request.name = inputRef.current.value;
+        }
+
+        if (request.name) {
+            api.post('/api/equipe', request)
+                .then((response) => {
+                    onReload();
+                });
+        }
+    }, [onReload, model.id]);
+
+    return (<EquipeJss key={model.id}>
+        <span>{model.sort}</span>
+        <input ref={inputRef} defaultValue={model.name} />
+        <ButtonUi onClick={handleEdit}>Salvar</ButtonUi>
+    </EquipeJss>);
+};
+
 const EquipeView: React.FC = () => {
     const [models, setModels] = React.useState<IEquipeModel[]>([]);
-
-    const inputRef = React.useRef<HTMLInputElement>(null);
 
     const load = React.useCallback(() => {
         api.get('/api/equipe')
@@ -15,13 +48,6 @@ const EquipeView: React.FC = () => {
                 setModels(response.data);
             });
     }, []);
-
-    React.useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.value = "";
-            inputRef.current.focus();
-        }
-    }, [models]);
 
     React.useEffect(load, [load]);
 
@@ -37,14 +63,11 @@ const EquipeView: React.FC = () => {
 
         <ContainerJss>
             {models.map((model) => {
-                return (<EquipeJss key={model.id}>
-                    <input ref={inputRef} defaultValue={model.name} />
-                    <button>Salvar</button>
-                </EquipeJss>)
+                return (<Equipe model={model} onReload={load} />)
             })}
         </ContainerJss>
         <div style={{ marginLeft: 10, marginTop: 30 }}>
-            <button onClick={handleSortear} style={{ fontSize: 24, backgroundColor: "#546E7A", borderRadius: 5, width: "15%" }}>Sortear</button>
+            <ButtonUi onClick={handleSortear}>Sortear</ButtonUi>
         </div>
     </>);
 };

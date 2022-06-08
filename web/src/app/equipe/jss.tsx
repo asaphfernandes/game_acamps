@@ -13,6 +13,7 @@ export const EquipeJss = styled('li')({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: 500,
     gap: 16,
 

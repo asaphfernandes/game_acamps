@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import ButtonUi from '../ui/button';
 import { api, IEquipeModel, IProvaModel, IResultadoModel, LS } from '../utils';
+import { EquipeContainerJss, EquipeGroupJss, StartContainerJss, TransmitirContainerJss } from './jss';
 
 interface IEquipeProps {
     resultado: IResultadoModel;
@@ -21,22 +23,20 @@ const Equipe: React.FC<IEquipeProps> = ({
         return (<>
             <b>{model.name}</b>
             <div>
-                <button onClick={() => { handleModel(undefined) }}>
+                <ButtonUi onClick={() => { handleModel(undefined) }}>
                     Mudar
-                </button>
+                </ButtonUi>
             </div>
         </>)
     } else {
-        return (<ul>
+        return (<>
             {models.map((model) => {
                 const disabled = resultado.equipes.findIndex(w => w.id === model.id) > -1;
-                return (<li key={model.id}>
-                    <button disabled={disabled} onClick={() => { handleModel(model); }}>
-                        {model.sort} - {model.name}
-                    </button>
-                </li>)
+                return (<ButtonUi key={model.id} disabled={disabled} onClick={() => { handleModel(model); }}>
+                    {model.sort} - {model.name}
+                </ButtonUi>)
             })}
-        </ul>);
+        </>);
     }
 };
 
@@ -99,26 +99,29 @@ const CompetirEquipeView: React.FC = () => {
             <Link to='/'>Voltar</Link> / Competir {model.name}
         </h1>
 
-        <h3>Equipes pares</h3>
-        <Equipe resultado={resultado} setModel={setModelPar} model={equipe1}
-            models={models.filter(w => w.sort % 2 === 1)} />
+        <EquipeGroupJss>
+            <EquipeContainerJss>
+                <h3>Equipes pares</h3>
+                <Equipe resultado={resultado} setModel={setModelPar} model={equipe1}
+                    models={models.filter(w => w.sort % 2 === 1)} />
+            </EquipeContainerJss>
 
-        <h3>Equipes impares</h3>
-        <Equipe resultado={resultado} setModel={setModelImpar} model={equipe2}
-            models={models.filter(w => w.sort % 2 === 0)} />
+            <EquipeContainerJss>
+                <h3>Equipes impares</h3>
+                <Equipe resultado={resultado} setModel={setModelImpar} model={equipe2}
+                    models={models.filter(w => w.sort % 2 === 0)} />
+            </EquipeContainerJss>
+        </EquipeGroupJss>
 
-        <hr />
-        <div>
-            <button disabled={!equipe1 || !equipe2} onClick={handleStart}>Start</button>
-        </div>
 
-        <hr />
-        <div>
-            <button onClick={handleTransmitir}>Transmitir</button>
-        </div>
-        <div>
-            <button onClick={handleMudarProva} >Mudar prova</button>
-        </div>
+        <StartContainerJss>
+            <ButtonUi disabled={!equipe1 || !equipe2} onClick={handleStart}>Start</ButtonUi>
+        </StartContainerJss>
+
+        <TransmitirContainerJss>
+            <ButtonUi onClick={handleTransmitir}>Transmitir</ButtonUi>
+            <ButtonUi variant='secondary' onClick={handleMudarProva} >Mudar prova</ButtonUi>
+        </TransmitirContainerJss>
     </>);
 };
 

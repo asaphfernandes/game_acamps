@@ -16,5 +16,7 @@ namespace Api.Colletions
     public void UpdateSort(int sort) => Sort = sort;
 
     public void Sortear() => Sort = new Random().Next();
+
+    internal void UpdateName(string name) => Name = name;
   }
 }
