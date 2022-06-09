@@ -26,21 +26,22 @@ namespace Api.Controllers.Resultados.Home
         .AsQueryable()
         .SingleOrDefaultAsync(cancellationToken);
 
-      var equipes = await Context.Set<Equipe>()
-        .AsQueryable()
-        .ToListAsync(cancellationToken);
-
-      var response = new
+      var response = new ResponseViewModel
       {
-        LastChange = $"{resultado.LastChange}",
-        Equipes = resultado.Equipes.Select(s => new
-        {
-          s.Name,
-          Penalidde = $"{s.PenalidadeSeconds:00}s",
-          Diferenca = "",
-          Total = $"{new System.TimeOnly(s.TotalMiliseconds * 10000):HH:mm:ss.ffff}"
-        }).ToList()
+        LastChange = $"{resultado.LastChange}"
       };
+
+      foreach (var equipe in resultado.Equipes)
+      {
+        response.Equipes.Add(new ResponseViewModel.SubEquipe
+        {
+          Name = equipe.Name,
+          Penalidde = $"{equipe.PenalidadeSeconds:00}s",
+          Bonus = $"{equipe.BonificacaoSeconds:00}s",
+          Diferenca = "",
+          Total = $"{new System.TimeOnly(equipe.TotalMiliseconds * 10000):HH:mm:ss.ffff}"
+        });
+      }
 
       return Json(response);
     }

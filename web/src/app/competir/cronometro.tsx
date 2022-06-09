@@ -1,55 +1,115 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import ButtonUi from '../ui/button';
 import { calcDiff, IEquipeModel, IProvaModel, IResultadoModel, LS, maskTime } from '../utils';
+import { ConcluirContainerJss, CronometroEquipeJss, CronometroHeader, CronometroTimer, HubEquipeJss, PunicaoJss } from './jss';
 
 interface ICronometroProps {
-    model: IEquipeModel;
+    equipe: IEquipeModel;
+    prova: IProvaModel;
     start: Date;
 }
 
 const Cronometro: React.FC<ICronometroProps> = ({
-    model, start
+    equipe, prova, start
 }) => {
     const [punicao, setPunicao] = React.useState(0);
     const [conclusao, setConclucao] = React.useState<number>();
+    const [bonificacao, setBonificacao] = React.useState(0);
 
-    const handlePunir = React.useCallback(() => {
+    const setPunir = React.useCallback((value: number) => {
         const resultadoStorage = localStorage.getItem(LS.RESULTADO);
         if (resultadoStorage) {
             const resultado = JSON.parse(resultadoStorage) as IResultadoModel;
 
-            const equipe = resultado.equipes.filter(w => w.id === model.id)[0];
+            let equipeStorage = resultado.equipes.filter(w => w.id === equipe.id)[0];
 
-            if (equipe) {
-                ++equipe.penalidadeSeconds
+            if (equipeStorage) {
+                equipeStorage.penalidadeSeconds += value
+
+                // Corrige para que a punição não fique menos que zero.
+                if(equipeStorage.penalidadeSeconds < 0){
+                    equipeStorage.penalidadeSeconds = 0;
+                }
             } else {
-                resultado.equipes.push({
-                    id: model.id,
+                equipeStorage = {
+                    id: equipe.id,
+                    name: equipe.name,
                     penalidadeSeconds: 1,
+                    bonusSeconds: 0,
                     timeMiliseconds: 0
-                });
+                };
+                resultado.equipes.push(equipeStorage);
             }
 
             localStorage.setItem(LS.RESULTADO, JSON.stringify(resultado));
-            setPunicao(s => ++s);
+            setPunicao(equipeStorage.penalidadeSeconds);
         }
-    }, [model.id]);
+    }, [equipe]);
+
+    const addPunir = React.useCallback(() => {
+        setPunir(+prova.punicao);
+    }, [setPunir, prova]);
+
+    const removePunir = React.useCallback(() => {
+        setPunir(-prova.punicao);
+    }, [setPunir, prova]);
+
+    const setBonus = React.useCallback((value: number) => {
+        const resultadoStorage = localStorage.getItem(LS.RESULTADO);
+        if (resultadoStorage) {
+            const resultado = JSON.parse(resultadoStorage) as IResultadoModel;
+
+            let equipeStorage = resultado.equipes.filter(w => w.id === equipe.id)[0];
+
+            if (equipeStorage) {
+                equipeStorage.bonusSeconds += value
+
+                // Corrige para que a bonificação não fique menos que zero.
+                if(equipeStorage.bonusSeconds < 0){
+                    equipeStorage.bonusSeconds = 0;
+                }
+            } else {
+                equipeStorage = {
+                    id: equipe.id,
+                    name: equipe.name,
+                    penalidadeSeconds: 0,
+                    bonusSeconds: 1,
+                    timeMiliseconds: 0
+                };
+                resultado.equipes.push(equipeStorage);
+            }
+
+            localStorage.setItem(LS.RESULTADO, JSON.stringify(resultado));
+            setBonificacao(equipeStorage.bonusSeconds);
+        }
+    }, [equipe]);
+
+    const addBonus = React.useCallback(() => {
+        setBonus(+prova.bonus);
+    }, [setBonus, prova]);
+
+    const removeBonus = React.useCallback(() => {
+        setBonus(-prova.bonus);
+    }, [setBonus, prova]);
 
     const handleConcluir = React.useCallback(() => {
         const resultadoStorage = localStorage.getItem(LS.RESULTADO);
         if (resultadoStorage) {
             const resultado = JSON.parse(resultadoStorage) as IResultadoModel;
 
-            const equipe = resultado.equipes.filter(w => w.id === model.id)[0];
+            const equipeStorage = resultado.equipes.filter(w => w.id === equipe.id)[0];
 
             const diff = calcDiff(start, new Date());
 
-            if (equipe) {
-                equipe.timeMiliseconds = diff;
+            if (equipeStorage) {
+                equipeStorage.timeMiliseconds = diff;
             } else {
                 resultado.equipes.push({
-                    id: model.id,
+                    id: equipe.id,
+                    name: equipe.name,
                     penalidadeSeconds: 0,
+                    bonusSeconds: 0,
                     timeMiliseconds: diff
                 });
             }
@@ -57,29 +117,31 @@ const Cronometro: React.FC<ICronometroProps> = ({
             localStorage.setItem(LS.RESULTADO, JSON.stringify(resultado));
             setConclucao(diff);
         }
-    }, [model.id, start]);
+    }, [equipe, start]);
 
-    return (<div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 20,
-        flex: 1
-    }}>
-        <b>{model.name}</b>
-        <div>
-            <button onClick={handlePunir}>
-                Punição <br />
-                {punicao}s
-            </button>
-        </div>
-        <div>
-            <button disabled={!!conclusao} onClick={handleConcluir}>
-                Concluir
-                <br />
-                {conclusao && maskTime(conclusao)}
-            </button>
-        </div>
-    </div>);
+    return (<HubEquipeJss>
+        <b>{equipe.name}</b>
+        <PunicaoJss>
+            <span className='title'>Punição</span>
+            <ButtonUi onClick={addPunir}>+</ButtonUi>
+            <span className='display'>{punicao}s</span>
+            <ButtonUi onClick={removePunir}>-</ButtonUi>
+        </PunicaoJss>
+
+        <ButtonUi className='concluir' variant='secondary' onClick={handleConcluir}>
+            Concluir
+            <br />
+            {conclusao && maskTime(conclusao)}
+        </ButtonUi>
+
+        {prova.bonus && <PunicaoJss>
+            <span className='title'>Bonus</span>
+            <ButtonUi onClick={addBonus}>+</ButtonUi>
+            <span className='display'>{bonificacao}s</span>
+            <ButtonUi onClick={removeBonus}>-</ButtonUi>
+        </PunicaoJss>}
+
+    </HubEquipeJss>);
 };
 
 const CompetirCronometroView: React.FC = () => {
@@ -124,33 +186,26 @@ const CompetirCronometroView: React.FC = () => {
     }, []);
 
     const handleVoltar = React.useCallback(() => {
-        history.push('/competir/equipe');
+        if (window.confirm('Verifique se todas as equipes estão concluídas')) {
+            history.push('/competir/equipe');
+        }
     }, [history]);
 
     return (<>
-        <h1>
+        <CronometroHeader>
             Competir {prova.name}
-        </h1>
+        </CronometroHeader>
 
-        <h2>{maskTime(calcDiff(start, new Date()))}</h2>
+        <CronometroTimer>{maskTime(calcDiff(start, new Date()))}</CronometroTimer>
 
-        <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 50,
-            marginTop: 50,
-            marginBottom: 50
-        }}>
-            <Cronometro model={equipe1} start={start} />
-            <Cronometro model={equipe2} start={start} />
-        </div>
+        <CronometroEquipeJss>
+            <Cronometro equipe={equipe1} prova={prova} start={start} />
+            <Cronometro equipe={equipe2} prova={prova} start={start} />
+        </CronometroEquipeJss>
 
-        <div>
-            <button>Concluir</button>
-        </div>
-        <div>
-            <button onClick={handleVoltar}>Voltar</button>
-        </div>
+        <ConcluirContainerJss>
+            <ButtonUi onClick={handleVoltar}>Voltar</ButtonUi>
+        </ConcluirContainerJss>
     </>);
 };
 

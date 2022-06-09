@@ -13,6 +13,7 @@ namespace Api.Controllers.Resultados.Transmitir
       public Guid Id { get; set; }
       public string Name { get; set; }
       public int PenalidadeSeconds { get; set; }
+      public int BonificacaoSeconds { get; set; }
       public int TimeMiliseconds { get; set; }
     }
   }

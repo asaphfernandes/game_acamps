@@ -32,6 +32,7 @@ namespace Api.Controllers.Resultados.Transmitir
         .Select(s => new Resultado.SubEquipe(s.Id, s.Name)
         {
           PenalidadeSeconds = s.PenalidadeSeconds,
+          BonificacaoSeconds = s.BonificacaoSeconds,
           TimeMiliseconds = s.TimeMiliseconds
         }).ToList()
       });

@@ -87,6 +87,7 @@ namespace Api.Colletions
       public Guid Id { get; set; }
       public string Name { get; set; }
       public int PenalidadeSeconds { get; set; }
+      public int BonificacaoSeconds { get; set; }
       public int TimeMiliseconds { get; set; }
 
       public int TotalMiliseconds { get; set; }
@@ -100,14 +101,16 @@ namespace Api.Colletions
       public void Update(SubEquipe equipe)
       {
         PenalidadeSeconds = equipe.PenalidadeSeconds;
+        BonificacaoSeconds = equipe.BonificacaoSeconds;
         TimeMiliseconds = equipe.TimeMiliseconds;
         CalcTotal();
       }
 
       private void CalcTotal()
       {
-        TotalMiliseconds = PenalidadeSeconds * 1000;
-        TotalMiliseconds += TimeMiliseconds;
+        var penalidade = PenalidadeSeconds * 1000;
+        var bonificacao = BonificacaoSeconds * 1000;
+        TotalMiliseconds = TimeMiliseconds + penalidade - bonificacao;
       }
     }
   }

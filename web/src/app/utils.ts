@@ -29,7 +29,9 @@ export interface IEquipeModel {
 
 export interface IEquipeResultadoModel {
     id: string;
+    name: string;
     penalidadeSeconds: number;
+    bonusSeconds: number;
     timeMiliseconds: number;
 }
 
