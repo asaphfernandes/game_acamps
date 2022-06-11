@@ -101,5 +101,6 @@ export const ConcluirContainerJss = styled('div')({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    gap: 40,
     marginTop: 40
 })

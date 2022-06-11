@@ -2,6 +2,13 @@ import styled from "@emotion/styled";
 
 export const ContainerJss = styled('ol')({
     display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    margin: 20
+});
+
+export const EquipeContainerJss = styled('ol')({
+    display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     margin: 'auto 20px',

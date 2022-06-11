@@ -24,6 +24,7 @@ export interface IProvaModel {
 export interface IEquipeModel {
     id: string;
     name: string;
+    provaName: string;
     sort: number;
 };
 
@@ -31,8 +32,8 @@ export interface IEquipeResultadoModel {
     id: string;
     name: string;
     penalidadeSeconds: number;
-    bonusSeconds: number;
-    timeMiliseconds: number;
+    bonificacaoSeconds: number;
+    timeMiliseconds?: number;
 }
 
 export interface IResultadoModel {

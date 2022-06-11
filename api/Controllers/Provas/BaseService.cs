@@ -19,35 +19,24 @@ namespace Api.Controllers.Provas
 
     protected async Task GeneratedEquipesAsync(CancellationToken cancellationToken)
     {
-      var countProvas = await Context.Set<Prova>().AsQueryable().CountAsync(cancellationToken);
+      var provas = await Context.Set<Prova>().AsQueryable().ToListAsync(cancellationToken);
       var equipes = await Context.Set<Equipe>().AsQueryable().ToListAsync(cancellationToken);
 
-      var countEquipes = countProvas * 2;
-      var aux = countEquipes - equipes.Count;
+      foreach (var equipe in equipes)
+        await Context.Set<Equipe>().DeleteOneAsync(w => w.Id == equipe.Id, cancellationToken);
 
-      if (aux > 0)
+      var countEquipes = provas.Count * 2;
+      var aux = 1;
+
+      foreach (var prova in provas)
       {
-        var maxEquipe = equipes
-          .OrderByDescending(o => o.Sort)
-          .Select(s => s.Sort)
-          .FirstOrDefault();
+        var equipe1 = new Equipe($"[Equipe {aux}]", prova.Name, aux);
+        await Context.Set<Equipe>().InsertOneAsync(equipe1, cancellationToken: cancellationToken);
 
-        for (int i = 0; i < aux; i++)
-        {
-          ++maxEquipe;
-          var equipe = new Equipe($"[Equipe {maxEquipe}]", maxEquipe);
-          await Context.Set<Equipe>().InsertOneAsync(equipe, cancellationToken: cancellationToken);
-        }
-      }
+        var equipe2 = new Equipe($"[Equipe {aux + provas.Count}]", prova.Name, aux + provas.Count);
+        await Context.Set<Equipe>().InsertOneAsync(equipe2, cancellationToken: cancellationToken);
 
-      if (aux < 0)
-      {
-        var deletes = equipes
-          .OrderBy(o => o.Name)
-          .OrderByDescending(o => o.Sort).ToList();
-
-        foreach (var delete in deletes)
-          await Context.Set<Equipe>().DeleteOneAsync(w => w.Id == delete.Id, cancellationToken);
+        aux++;
       }
     }
   }

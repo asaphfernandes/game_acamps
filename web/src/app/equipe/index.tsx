@@ -2,7 +2,7 @@ import React from 'react';
 import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
 import { api, IEquipeModel, LS } from '../utils';
-import { ContainerJss, EquipeJss } from './jss';
+import { ContainerJss, EquipeContainerJss, EquipeJss } from './jss';
 
 interface IEquipeProps {
     model: IEquipeModel;
@@ -32,7 +32,7 @@ const Equipe: React.FC<IEquipeProps> = ({
     }, [onReload, model.id]);
 
     return (<EquipeJss key={model.id}>
-        <span>{model.sort}</span>
+        <span>{model.sort} - {model.provaName}</span>
         <input ref={inputRef} defaultValue={model.name} />
         <ButtonUi onClick={handleEdit}>Salvar</ButtonUi>
     </EquipeJss>);
@@ -62,13 +62,24 @@ const EquipeView: React.FC = () => {
         <Topbar title='Equipe' />
 
         <ContainerJss>
-            {models.map((model) => {
-                return (<Equipe model={model} onReload={load} />)
-            })}
+            <h3>Alfa</h3>
+            <EquipeContainerJss>
+                {models.filter(w => w.sort % 2 === 1).map((model) => {
+                    return (<Equipe key={model.id} model={model} onReload={load} />)
+                })}
+            </EquipeContainerJss>
+
+            <h3>Omega</h3>
+            <EquipeContainerJss>
+                {models.filter(w => w.sort % 2 === 0).map((model) => {
+                    return (<Equipe key={model.id} model={model} onReload={load} />)
+                })}
+            </EquipeContainerJss>
+
+            <div style={{ marginLeft: 10, marginTop: 30 }}>
+                <ButtonUi onClick={handleSortear}>Sortear</ButtonUi>
+            </div>
         </ContainerJss>
-        <div style={{ marginLeft: 10, marginTop: 30 }}>
-            <ButtonUi onClick={handleSortear}>Sortear</ButtonUi>
-        </div>
     </>);
 };
 

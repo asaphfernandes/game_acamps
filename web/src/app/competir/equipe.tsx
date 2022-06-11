@@ -101,13 +101,13 @@ const CompetirEquipeView: React.FC = () => {
 
         <EquipeGroupJss>
             <EquipeContainerJss>
-                <h3>Equipes pares</h3>
+                <h3>Equipes Alfa</h3>
                 <Equipe resultado={resultado} setModel={setModelPar} model={equipe1}
                     models={models.filter(w => w.sort % 2 === 1)} />
             </EquipeContainerJss>
 
             <EquipeContainerJss>
-                <h3>Equipes impares</h3>
+                <h3>Equipes Omega</h3>
                 <Equipe resultado={resultado} setModel={setModelImpar} model={equipe2}
                     models={models.filter(w => w.sort % 2 === 0)} />
             </EquipeContainerJss>

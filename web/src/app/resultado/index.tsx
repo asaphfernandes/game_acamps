@@ -1,8 +1,10 @@
 import React from 'react';
 import Topbar from '../ui/topbar';
 import { api, IRankEquipeModel, IRankModel } from '../utils';
+import { ContentJss, EquipeJss, Lugar1Jss, Lugar2Jss, Lugar3Jss, RankingContainerJss } from './jss';
 
 const ResultadoView: React.FC = () => {
+    const [render, reRender] = React.useState(false);
     const [model, setModel] = React.useState<IRankModel>({
         lastChange: '', equipes: []
     });
@@ -11,11 +13,11 @@ const ResultadoView: React.FC = () => {
         api.get('/api/resultado')
             .then((response) => {
                 setModel(response.data);
-                setTimeout(load, 5000);
+                setTimeout(() => reRender(s => !s), 5000);
             });
     }, []);
 
-    React.useEffect(load, [load]);
+    React.useEffect(load, [render, load]);
 
     const equipe1: IRankEquipeModel | undefined = model.equipes.length >= 3 ? model.equipes[0] : undefined;
     const equipe2: IRankEquipeModel | undefined = model.equipes.length >= 3 ? model.equipes[1] : undefined;
@@ -23,45 +25,45 @@ const ResultadoView: React.FC = () => {
 
     return (<>
         <Topbar title='Resultado' subtitle={model.lastChange} />
+        <ContentJss>
+            {equipe1
+                && equipe2
+                && equipe3
+                && <>
+                    <Lugar2Jss>
+                        <h3>2º</h3>
+                        <p>{equipe2.name}</p>
+                        <p>{equipe2.total}</p>
+                    </Lugar2Jss>
 
-        {equipe1
-            && equipe2
-            && equipe3
-            && <div style={{
-                display: 'flex', justifyContent: 'center', alignItems: 'end'
-            }}>
-                <div style={{
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                    width: 250, height: 150, backgroundColor: '#8F9591'
-                }}>
-                    <h3>2º</h3>
-                    <p>{equipe2.name}</p>
-                    <p>{equipe2.total}</p>
-                </div>
+                    <Lugar1Jss>
+                        <h3>1º</h3>
+                        <p>{equipe1.name}</p>
+                        <p>{equipe1.total}</p>
+                    </Lugar1Jss>
 
-                <div style={{
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                    width: 250, height: 200, backgroundColor: '#FFFF00'
-                }}>
-                    <h3>1º</h3>
-                    <p>{equipe1.name}</p>
-                    <p>{equipe1.total}</p>
-                </div>
+                    <Lugar3Jss>
+                        <h3>3º</h3>
+                        <p>{equipe3.name}</p>
+                        <p>{equipe3.total}</p>
+                    </Lugar3Jss>
+                </>}
 
-                <div style={{
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                    width: 250, height: 100, backgroundColor: '#B7701E'
-                }}>
-                    <h3>3º</h3>
-                    <p>{equipe3.name}</p>
-                    <p>{equipe3.total}</p>
-                </div>
-            </div>}
-        <ul>
-            {model.equipes.map((equipe, i) => {
-                return <li key={equipe.name}>{i} - {equipe.name} {equipe.total}</li>
-            })}
-        </ul>
+            <RankingContainerJss>
+                <EquipeJss>
+                    <label>Pos</label>
+                    <label>Líder</label>
+                    <label>Tempo</label>
+                </EquipeJss>
+                {model.equipes.map((equipe, i) => {
+                    return <EquipeJss key={equipe.name} className={`pos-${i}`}>
+                        <span>{i+1}</span>
+                        <span>{equipe.name}</span>
+                        <span>{equipe.total}</span>
+                        </EquipeJss>
+                })}
+            </RankingContainerJss>
+        </ContentJss>
     </>);
 };
 
