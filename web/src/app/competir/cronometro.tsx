@@ -210,12 +210,11 @@ const CompetirCronometroView: React.FC = () => {
             const equipe1Storage = resultado.equipes.filter(w => w.id === equipe1.id)[0];
             const equipe2Storage = resultado.equipes.filter(w => w.id === equipe2.id)[0];
 
-            let diff = calcDiff(start, new Date());
+            let diff = 1000 * 60 * 5;
 
             if (equipe1Storage && !equipe1Storage.timeMiliseconds) {
                 equipe1Storage.timeMiliseconds = diff;
             } else if (!equipe1Storage) {
-                diff = calcDiff(start, new Date());
                 resultado.equipes.push({
                     id: equipe1.id,
                     name: equipe1.name,
@@ -228,7 +227,6 @@ const CompetirCronometroView: React.FC = () => {
             if (equipe2Storage && !equipe2Storage.timeMiliseconds) {
                 equipe2Storage.timeMiliseconds = diff;
             } else if (!equipe2Storage) {
-                diff = calcDiff(start, new Date());
                 resultado.equipes.push({
                     id: equipe2.id,
                     name: equipe2.name,
