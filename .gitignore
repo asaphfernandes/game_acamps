@@ -244,3 +244,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /sql.sql
+/api/Properties/PublishProfiles
