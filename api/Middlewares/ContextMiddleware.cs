@@ -52,7 +52,7 @@ namespace Api.Middlewares
 
     public static IServiceCollection AddMongoDbContext<TContext>(this IServiceCollection services, IConfiguration configuration) where TContext : MongoDbContext
     {
-      var connectionString = configuration.GetSection("ConnectionStrings").GetValue<string>("MongoDb");
+      var connectionString = configuration.GetValue<string>("MONGODB_CONNECTION_STRING");
       services.AddSingleton(container =>
       {
         return (TContext)Activator.CreateInstance(typeof(TContext), new MongoDbSettings(connectionString));
