@@ -24,7 +24,7 @@ namespace Api.Controllers.Equipes.Home
     {
       var response = await Context.Set<Equipe>()
         .AsQueryable()
-        .OrderBy(o => o.Sort)
+        .OrderBy(o => o.Name)
         .ToListAsync(cancellationToken);
 
       return Json(response);

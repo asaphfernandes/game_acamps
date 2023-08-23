@@ -1,8 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.Equipes.Sortear
+namespace Api.Controllers.Equipes.Delete
 {
   [Route("api/equipe")]
   public class Controller : BaseController
@@ -14,10 +15,10 @@ namespace Api.Controllers.Equipes.Sortear
 
     private Service Service { get; }
 
-    [HttpPost("sortear")]
-    public async Task<IActionResult> SortearAsync(CancellationToken cancellationToken)
+    [HttpDelete, Route("{id}")]
+    public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-      await Service.SortearAsync(cancellationToken);
+      await Service.DeleteAsync(id, cancellationToken);
       return Ok();
     }
   }

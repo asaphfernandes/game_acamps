@@ -22,28 +22,10 @@ namespace Api.Controllers.Resultados.Home
     [HttpGet]
     public async Task<IActionResult> IndexAsync(CancellationToken cancellationToken)
     {
-      var resultado = await Context.Set<Resultado>()
-        .AsQueryable()
-        .SingleOrDefaultAsync(cancellationToken);
+      var resultado = await Context.Set<Resultado>().AsQueryable().ToListAsync(cancellationToken);
 
-      var response = new ResponseViewModel
-      {
-        LastChange = $"{resultado.LastChange}"
-      };
 
-      foreach (var equipe in resultado.Equipes)
-      {
-        response.Equipes.Add(new ResponseViewModel.SubEquipe
-        {
-          Name = equipe.Name,
-          Penalidde = $"{equipe.PenalidadeSeconds:00}s",
-          Bonus = $"{equipe.BonificacaoSeconds:00}s",
-          Diferenca = "",
-          Total = $"{new System.TimeOnly(equipe.TotalMiliseconds * 10000):HH:mm:ss.ffff}"
-        });
-      }
-
-      return Json(response);
+      return Json(resultado);
     }
   }
 }

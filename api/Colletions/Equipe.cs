@@ -1,28 +1,21 @@
-using System;
-
 namespace Api.Colletions
 {
   public class Equipe : BaseColletion
   {
     public string Name { get; private set; }
-    public string ProvaName { get; private set; }
-    public int Sort { get; private set; }
 
-    public Equipe(string name, string provaName, int sort) : base()
+    public string Lider { get; private set; }
+
+    public Equipe(string name, string lider) : base()
     {
       Name = name;
-      ProvaName = provaName;
-      Sort = sort;
+      Lider = lider;
     }
 
-    public void UpdateSort(int sort, string provaName)
+    internal void Update(string name, string lider)
     {
-      Sort = sort;
-      ProvaName = provaName;
+      Name = name;
+      Lider = lider;
     }
-
-    public void Sortear() => Sort = new Random().Next();
-
-    internal void UpdateName(string name) => Name = name;
   }
 }

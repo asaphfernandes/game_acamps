@@ -1,47 +1,50 @@
 import React from 'react';
-import {  useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
-import { IProvaModel, IResultadoModel, LS } from '../utils';
+import { api, IProvaModel, LS } from '../utils';
 import { ProvaJss } from './jss';
 
 const CompetirView: React.FC = () => {
     const history = useHistory();
 
-    React.useEffect(() => {
-        const provaStorage = localStorage.getItem(LS.PROVA);
-        if (provaStorage) {
-            history.push(`/competir/equipe`);
-        }
-    }, [history])
+    const [models, setModels] = React.useState<IProvaModel[]>([]);
 
-    const models = React.useMemo(() => {
-        const provasStorage = localStorage.getItem(LS.PROVAS);
-        if (provasStorage) {
-            return JSON.parse(provasStorage) as IProvaModel[];
+    const prova = React.useMemo(() => {
+        var provaStorage = localStorage.getItem(LS.PROVA);
+        if (provaStorage) {
+            return JSON.parse(provaStorage) as IProvaModel;
         }
-        return new Array<IProvaModel>();
+        return undefined;
     }, []);
 
-    const handleChange = React.useCallback((id: string) => {
-        var m = models.filter(w => w.id === id)[0];
-        localStorage.setItem(LS.PROVA, JSON.stringify(m));
+    const load = React.useCallback(() => {
+        api.get('/api/prova')
+            .then((response) => {
+                setModels(response.data);
+            });
+    }, []);
+    React.useEffect(load, [load]);
 
-        const resultado: IResultadoModel = {
-            id: id,
-            equipes: []
-        };
+    const handleChange = (model: IProvaModel) => {
+        localStorage.setItem(LS.PROVA, JSON.stringify(model));
 
-        localStorage.setItem(LS.RESULTADO, JSON.stringify(resultado));
+        api.get(`/api/resultado/manutencao/${model.name}`)
+        .then((response) => {
+            localStorage.setItem(LS.RESULTADOS, JSON.stringify(response.data));
+            history.push(`/competir/equipe`);
+        });
+    };
 
+    if (!!prova) {
         history.push(`/competir/equipe`);
-    }, [history, models]);
+    }
 
     return (<>
         <Topbar title='Competir' />
         <ProvaJss>
             {models.map((model) => {
-                return (<ButtonUi key={model.id} onClick={() => { handleChange(model.id); }}>{model.name}</ButtonUi>)
+                return (<ButtonUi key={model.id} onClick={() => { handleChange(model); }}>{model.name}</ButtonUi>)
             })}
         </ProvaJss>
     </>);

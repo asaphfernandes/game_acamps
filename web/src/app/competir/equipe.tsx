@@ -1,82 +1,57 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import ButtonUi from '../ui/button';
-import { api, IEquipeModel, IProvaModel, IResultadoModel, LS } from '../utils';
-import { EquipeContainerJss, EquipeGroupJss, StartContainerJss, TransmitirContainerJss } from './jss';
+import { api, IProvaModel, IResultadoModel, LS } from '../utils';
+import { EquipeStageJss, EquipeContainerJss, StartContainerJss, TransmitirContainerJss, EquipeJss, EquipeHeaderJss } from './jss';
 
 interface IEquipeProps {
     resultado: IResultadoModel;
-    setModel: (model?: IEquipeModel) => void;
-    model: IEquipeModel | undefined;
-    models: IEquipeModel[];
+    setModel: (model?: IResultadoModel) => void;
+    isMudar?: boolean;
 }
 
 const Equipe: React.FC<IEquipeProps> = ({
-    resultado, models, model, setModel
+    resultado, setModel, isMudar
 }) => {
 
-    const handleModel = React.useCallback((model?: IEquipeModel) => {
-        setModel(model);
-    }, [setModel]);
+    const handleModel = () => {
+        if(!!resultado.timeMiliseconds) return;
+        isMudar ? setModel(undefined) : setModel(resultado);
+    };
 
-    if (model) {
-        return (<>
-            <b>{model.name}</b>
-            <div>
-                <ButtonUi onClick={() => { handleModel(undefined) }}>
-                    Mudar
-                </ButtonUi>
-            </div>
-        </>)
-    } else {
-        return (<>
-            {models.map((model) => {
-                const disabled = resultado.equipes.findIndex(w => w.id === model.id) > -1;
-                return (<ButtonUi key={model.id} disabled={disabled} onClick={() => { handleModel(model); }}>
-                    {model.sort} - {model.name}
-                </ButtonUi>)
-            })}
-        </>);
-    }
+    return (<EquipeJss>
+        <EquipeHeaderJss>
+            <b>{resultado.equipeNome}</b>
+            <b>{resultado.equipeLider}</b>
+        </EquipeHeaderJss>
+
+        <ButtonUi onClick={handleModel} disabled={!!resultado.timeMiliseconds}>
+            {isMudar ? 'Mudar' : 'Escolher'}
+        </ButtonUi>
+    </EquipeJss>)
 };
 
 const CompetirEquipeView: React.FC = () => {
     const history = useHistory();
 
-    const [equipe1, setModelPar] = React.useState<IEquipeModel>();
-    const [equipe2, setModelImpar] = React.useState<IEquipeModel>();
+    const [equipeEsquerda, setEquipeEsquerda] = React.useState<IResultadoModel>();
+    const [equipeDireita, setEquipeDireita] = React.useState<IResultadoModel>();
 
-    const model = React.useMemo(() => {
-        const provaStorage = localStorage.getItem(LS.PROVA);
+    const prova = useMemo(() => {
+        var provaStorage = localStorage.getItem(LS.PROVA);
         if (provaStorage) {
-            const prova = JSON.parse(provaStorage);
-            return prova as IProvaModel;
+            return JSON.parse(provaStorage) as IProvaModel;
         }
-        return { name: '[SEM PROVA]', id: '' } as IProvaModel;
+        return {} as IProvaModel;
     }, []);
 
-    const resultado = React.useMemo(() => {
-        const resultadoStorage = localStorage.getItem(LS.RESULTADO);
-        if (resultadoStorage) {
-            const resultado = JSON.parse(resultadoStorage);
-            return resultado as IResultadoModel;
-        }
-        return { id: '', equipes: [] } as IResultadoModel;
-    }, []);
-
-    const models = React.useMemo(() => {
-        const provasStorage = localStorage.getItem(LS.EQUIPES);
-        if (provasStorage) {
-            return JSON.parse(provasStorage) as IEquipeModel[];
-        }
-        return new Array<IEquipeModel>();
-    }, []);
+    const resultados = JSON.parse(localStorage.getItem(LS.RESULTADOS) || '{}') as IResultadoModel[];
 
     const handleStart = React.useCallback(() => {
-        localStorage.setItem(LS.EQUIPE_1, JSON.stringify(equipe1));
-        localStorage.setItem(LS.EQUIPE_2, JSON.stringify(equipe2));
+        localStorage.setItem(LS.EQUIPE_1, JSON.stringify(equipeEsquerda));
+        localStorage.setItem(LS.EQUIPE_2, JSON.stringify(equipeDireita));
         history.push('/competir/cronometro');
-    }, [history, equipe1, equipe2]);
+    }, [history, equipeEsquerda, equipeDireita]);
 
     const handleMudarProva = React.useCallback(() => {
         localStorage.removeItem(LS.PROVA);
@@ -84,7 +59,7 @@ const CompetirEquipeView: React.FC = () => {
     }, [history]);
 
     const handleTransmitir = React.useCallback(() => {
-        var resultadoStorage = localStorage.getItem(LS.RESULTADO);
+        var resultadoStorage = localStorage.getItem(LS.RESULTADOS);
         if (resultadoStorage) {
             var request = JSON.parse(resultadoStorage);
             api.post('/api/resultado/transmitir', request)
@@ -96,26 +71,32 @@ const CompetirEquipeView: React.FC = () => {
 
     return (<>
         <h1>
-            <Link to='/'>Voltar</Link> / Competir {model.name}
+            <Link to='/'>Voltar</Link> / Competir {prova.name}
         </h1>
 
-        <EquipeGroupJss>
-            <EquipeContainerJss>
-                <h3>Equipes Alfa</h3>
-                <Equipe resultado={resultado} setModel={setModelPar} model={equipe1}
-                    models={models.filter(w => w.sort % 2 === 1)} />
-            </EquipeContainerJss>
+        <EquipeContainerJss>
+                <h3>Equipe esquerda</h3>
+            <EquipeStageJss>
+                {equipeEsquerda && <Equipe resultado={equipeEsquerda} setModel={setEquipeEsquerda} isMudar />}
+                {!equipeEsquerda && resultados.map((resultado) => {
+                    return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeEsquerda} />);
+                })}
+            </EquipeStageJss>
 
-            <EquipeContainerJss>
-                <h3>Equipes Omega</h3>
-                <Equipe resultado={resultado} setModel={setModelImpar} model={equipe2}
-                    models={models.filter(w => w.sort % 2 === 0)} />
-            </EquipeContainerJss>
-        </EquipeGroupJss>
+            {equipeEsquerda && <>
+                <h3>Equipe direita</h3>
+                <EquipeStageJss>
+                {equipeDireita && <Equipe resultado={equipeDireita} setModel={setEquipeDireita} isMudar />}
+                {!equipeDireita && resultados.filter(w => w.equipeNome !== equipeEsquerda.equipeNome).map((resultado) => {
+                    return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeDireita} />);
+                })}
+            </EquipeStageJss>
+            </>}
+        </EquipeContainerJss>
 
 
         <StartContainerJss>
-            <ButtonUi disabled={!equipe1 || !equipe2} onClick={handleStart}>Start</ButtonUi>
+            <ButtonUi disabled={!equipeEsquerda || !equipeDireita} onClick={handleStart}>Start</ButtonUi>
         </StartContainerJss>
 
         <TransmitirContainerJss>

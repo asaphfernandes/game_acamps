@@ -1,8 +1,10 @@
-namespace Api.Controllers.Provas.Create
+using System;
+
+namespace Api.Controllers.Resultados.Manutencao
 {
   public class RequestViewModel
   {
-    public string Name { get; set; }
+    public Guid Id { get; set; }
     public int Tempo { get; set; }
     public int Punicao { get; set; }
   }

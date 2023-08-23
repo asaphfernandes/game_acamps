@@ -11,17 +11,29 @@ export const ProvaJss = styled('div')({
     }
 });
 
-export const EquipeGroupJss = styled('div')({
+export const EquipeContainerJss = styled('div')({
     display: 'flex',
+    flexDirection: 'column',
     gap: 20,
     margin: 10
 });
 
-export const EquipeContainerJss = styled('div')({
+export const EquipeStageJss = styled('div')({
     flex: 1,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 20
+});
+
+export const EquipeJss = styled('div')({
+    display: 'flex',
+    gap: 16,
+});
+
+export const EquipeHeaderJss = styled('div')({
+    display: 'flex',
+    flexDirection: 'column',
 });
 
 export const StartContainerJss = styled('div')({

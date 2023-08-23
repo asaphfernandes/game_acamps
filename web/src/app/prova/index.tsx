@@ -1,31 +1,30 @@
 import React from 'react';
 import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
-import { api, IProvaModel, LS } from '../utils';
+import { api, IProvaModel } from '../utils';
 import { ContainerJss, ProvaJss } from './jss';
 
 const ProvaView: React.FC = () => {
     const [models, setModels] = React.useState<IProvaModel[]>([]);
 
     const nameRef = React.useRef<HTMLInputElement>(null);
+    const tempoRef = React.useRef<HTMLInputElement>(null);
     const punicaoRef = React.useRef<HTMLInputElement>(null);
-    const bonusRef = React.useRef<HTMLInputElement>(null);
 
     const load = React.useCallback(() => {
         api.get('/api/prova')
             .then((response) => {
-                localStorage.setItem(LS.PROVAS, JSON.stringify(response.data));
                 setModels(response.data);
             });
     }, []);
 
     React.useEffect(() => {
-        if (punicaoRef.current) {
-            punicaoRef.current.value = "";
+        if (tempoRef.current) {
+            tempoRef.current.value = "";
         }
 
-        if (bonusRef.current) {
-            bonusRef.current.value = "";
+        if (punicaoRef.current) {
+            punicaoRef.current.value = "";
         }
 
         if (nameRef.current) {
@@ -47,8 +46,8 @@ const ProvaView: React.FC = () => {
             request.punicao = parseInt(punicaoRef.current.value);
         }
 
-        if(bonusRef.current){
-            request.bonus = parseInt(bonusRef.current.value);
+        if(tempoRef.current){
+            request.tempo = parseInt(tempoRef.current.value);
         }
 
         if (request.name) {
@@ -71,14 +70,14 @@ const ProvaView: React.FC = () => {
         <ContainerJss>
             {models.map((model) => {
                 return (<ProvaJss key={model.id} >
-                    Nome: {model.name} - Punição: {model.punicao}s - Bonus: {model.bonus}s
+                    Nome: {model.name} - Tempo: {model.tempo}s - Punição: {model.punicao}s
                     <ButtonUi variant='delete' onClick={() => { handleDelete(model.id); }}>Delete</ButtonUi>
                 </ProvaJss>)
             })}
             <ProvaJss>
                 <input ref={nameRef} placeholder='Nome prova' />
+                <input ref={tempoRef} placeholder='Tempo segundos' />
                 <input ref={punicaoRef} placeholder='Punição segundos' />
-                <input ref={bonusRef} placeholder='Bonus segundos' />
                 <ButtonUi onClick={handleCreate}>Add</ButtonUi>
             </ProvaJss>
         </ContainerJss>

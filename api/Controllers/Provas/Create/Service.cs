@@ -5,22 +5,20 @@ using Api.Contexts;
 
 namespace Api.Controllers.Provas.Create
 {
-  public class Service : BaseService
+  public class Service
   {
-    public Service(DbGameContext context) : base(context)
+    public Service(DbGameContext context)
     {
+      Context = context;
     }
+
+    public DbGameContext Context { get; }
 
     public async Task CreateAsync(RequestViewModel viewModel, CancellationToken cancellationToken)
     {
-      if (!string.IsNullOrEmpty(viewModel.Name))
-      {
-        var prova = new Prova(viewModel.Name, viewModel.Punicao, viewModel.Bonus);
+      var prova = new Prova(viewModel.Name, viewModel.Tempo, viewModel.Punicao);
 
-        await Context.Set<Prova>().InsertOneAsync(prova, cancellationToken: cancellationToken);
-
-        await GeneratedEquipesAsync(cancellationToken);
-      }
+      await Context.Set<Prova>().InsertOneAsync(prova, cancellationToken: cancellationToken);
     }
   }
 }

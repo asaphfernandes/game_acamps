@@ -5,9 +5,9 @@ using Api.Colletions;
 using Api.Contexts;
 using MongoDB.Driver;
 
-namespace Api.Controllers.Provas.Delete
+namespace Api.Controllers.Equipes.Delete
 {
-  public class Service 
+  public class Service
   {
     public Service(DbGameContext context)
     {
@@ -16,9 +16,9 @@ namespace Api.Controllers.Provas.Delete
 
     public DbGameContext Context { get; }
 
-    public async Task CreateAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-      await Context.Set<Prova>().DeleteOneAsync(w => w.Id == id, cancellationToken);
+      await Context.Set<Equipe>().DeleteOneAsync(w => w.Id == id, cancellationToken: cancellationToken);
     }
   }
 }

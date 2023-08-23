@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.Equipes.Edit
+namespace Api.Controllers.Equipes.Create
 {
   [Route("api/equipe")]
   public class Controller : BaseController

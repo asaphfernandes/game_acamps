@@ -5,6 +5,7 @@ using Api.Colletions;
 using Api.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Api.Controllers.Provas.Home
 {
@@ -23,6 +24,7 @@ namespace Api.Controllers.Provas.Home
     {
       var response = await Context.Set<Prova>()
         .AsQueryable()
+        .OrderBy(o => o.Name)
         .ToListAsync(cancellationToken);
 
       return Json(response);

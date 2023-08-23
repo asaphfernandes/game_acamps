@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Api.Colletions;
 using Api.Contexts;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Api.Controllers.Resultados.Transmitir
 {
@@ -18,26 +19,14 @@ namespace Api.Controllers.Resultados.Transmitir
 
     public async Task TransmitirAsync(RequestViewModel viewModel, CancellationToken cancellationToken)
     {
-      var resultado = await Context.Set<Resultado>().AsQueryable().SingleOrDefaultAsync(cancellationToken);
+      var resultados = await Context.Set<Resultado>().AsQueryable().Where(w => w.ProvaNome == viewModel.ProvaNome).ToListAsync(cancellationToken);
 
-      if (resultado == null)
+      foreach (var equipe in viewModel.Equipes)
       {
-        resultado = new Resultado();
-        await Context.Set<Resultado>().InsertOneAsync(resultado, cancellationToken: cancellationToken);
+        var resultado = resultados.Single(w => w.EquipeNome == equipe.Name);
+        resultado.Update(equipe.TimeMiliseconds, equipe.PenalidadeSeconds);
+        await Context.Set<Resultado>().ReplaceOneAsync(o => o.Id == resultado.Id, resultado, cancellationToken: cancellationToken);
       }
-
-      resultado.AddProva(new Resultado.SubProva(viewModel.Id)
-      {
-        Equipes = viewModel.Equipes
-        .Select(s => new Resultado.SubEquipe(s.Id, s.Name)
-        {
-          PenalidadeSeconds = s.PenalidadeSeconds,
-          BonificacaoSeconds = s.BonificacaoSeconds,
-          TimeMiliseconds = s.TimeMiliseconds
-        }).ToList()
-      });
-
-      await Context.Set<Resultado>().ReplaceOneAsync(w => w.Id == resultado.Id, resultado, cancellationToken: cancellationToken);
     }
   }
 }

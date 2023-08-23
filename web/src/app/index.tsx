@@ -7,9 +7,10 @@ import EquipeView from './equipe';
 import ProvaView from './prova';
 import CompetirEquipeView from './competir/equipe';
 import CompetirCronometroView from './competir/cronometro';
+import ManutencaoView from './manutencao';
 
 const HomeView: React.FC = () => {
-  const opcoes = ["Resultado", "Prova", "Equipe"];
+  const opcoes = ["Resultado", "Prova", "Equipe", "Manutencao"];
   return (<Container>
     <ul style={{ listStyle: "none", width: 248 }}>
       <li style={{ width: 248, textAlign: "center", fontSize: 48, marginBottom: 25, background: '#546E7A', border: "1px solid #546E7A", borderRadius: 5 }}>
@@ -18,7 +19,7 @@ const HomeView: React.FC = () => {
         </Link>
       </li>
       {opcoes.map(opcao => {
-        return (<li key={opcao} style={{ width: 248, textAlign: "center", fontSize: 48, marginBottom: 25, background: "white", border: "1px solid #546E7A", borderRadius: 5 }}>
+        return (<li key={opcao} style={{ width: 248, textAlign: "center", fontSize: 32, marginBottom: 25, background: "white", border: "1px solid #546E7A", borderRadius: 5 }}>
           <Link to={`/${opcao}`} style={{ textDecoration: "none", color: "#546E7A", width: "100%" }}>
             {opcao}
           </Link>
@@ -39,6 +40,7 @@ const App: React.FC = () => {
         <Route exact path='/resultado' component={ResultadoView} />
         <Route exact path='/equipe' component={EquipeView} />
         <Route exact path='/prova' component={ProvaView} />
+        <Route exact path='/manutencao' component={ManutencaoView} />
       </Switch>
     </Suspense>
 

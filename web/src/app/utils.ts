@@ -2,55 +2,36 @@ import axios from 'axios';
 
 export const LS = {
     PROVA: 'prova',
-    PROVAS: 'provas',
-    EQUIPE: 'equipe',
-    EQUIPES: 'equipes',
-    RESULTADO: 'resultado',
+    RESULTADOS: 'resultados',
 
     EQUIPE_1: 'equipe_1',
     EQUIPE_2: 'equipe_2'
 };
 
-export const api = axios.create({ baseURL: 'http://192.168.0.36:61393' })
+export const api = axios.create({ baseURL: 'http://localhost:61393' })
 
 
 export interface IProvaModel {
     id: string;
     name: string;
+    tempo: string;
     punicao: string;
-    bonus: string;
 };
 
 export interface IEquipeModel {
     id: string;
     name: string;
-    provaName: string;
+    lider: string;
     sort: number;
+    tempo: string;
 };
-
-export interface IEquipeResultadoModel {
-    id: string;
-    name: string;
-    penalidadeSeconds: number;
-    bonificacaoSeconds: number;
-    timeMiliseconds?: number;
-}
 
 export interface IResultadoModel {
     id: string;
-    equipes: IEquipeResultadoModel[];
-}
-
-export interface IRankEquipeModel {
-    name: string;
-    penalidade: string;
-    diferenca: string;
-    total: string;
-}
-
-export interface IRankModel {
-    lastChange: string;
-    equipes: IRankEquipeModel[]
+    equipeNome: string;
+    equipeLider: string;
+    penalidadeSeconds: number;
+    timeMiliseconds?: number;
 }
 
 export const calcDiff = (start: Date, end: Date): number => {
