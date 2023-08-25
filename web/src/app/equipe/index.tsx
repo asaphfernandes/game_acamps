@@ -1,7 +1,7 @@
 import React from 'react';
 import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
-import { api, IEquipeModel, LS } from '../utils';
+import { api, IEquipeModel } from '../utils';
 import { ContainerJss, EquipeJss } from './jss';
 
 const EquipeView: React.FC = () => {
@@ -13,7 +13,6 @@ const EquipeView: React.FC = () => {
     const load = React.useCallback(() => {
         api.get('/api/equipe')
             .then((response) => {
-                localStorage.setItem('provas', JSON.stringify(response.data));
                 setModels(response.data);
             });
     }, []);

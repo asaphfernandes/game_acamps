@@ -23,7 +23,7 @@ namespace Api.Controllers.Resultados.Transmitir
 
       foreach (var equipe in viewModel.Equipes)
       {
-        var resultado = resultados.Single(w => w.EquipeNome == equipe.Name);
+        var resultado = resultados.Single(w => w.EquipeNome == equipe.EquipeNome);
         resultado.Update(equipe.TimeMiliseconds, equipe.PenalidadeSeconds);
         await Context.Set<Resultado>().ReplaceOneAsync(o => o.Id == resultado.Id, resultado, cancellationToken: cancellationToken);
       }

@@ -27,6 +27,7 @@ export const EquipeStageJss = styled('div')({
 });
 
 export const EquipeJss = styled('div')({
+    minWidth: 100,
     display: 'flex',
     gap: 16,
 });
@@ -34,6 +35,7 @@ export const EquipeJss = styled('div')({
 export const EquipeHeaderJss = styled('div')({
     display: 'flex',
     flexDirection: 'column',
+    gap: 8,
 });
 
 export const StartContainerJss = styled('div')({
@@ -58,7 +60,7 @@ export const CronometroHeader = styled('h1')({
 
 });
 
-export const CronometroTimer = styled('h2')({
+export const CronometroTimerJss = styled('h2')({
     marginTop: 20,
     textAlign: 'center'
 });

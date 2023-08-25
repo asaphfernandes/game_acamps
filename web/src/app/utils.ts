@@ -22,8 +22,8 @@ export interface IEquipeModel {
     id: string;
     name: string;
     lider: string;
-    sort: number;
-    tempo: string;
+    posicao: number;
+    tempo: number;
 };
 
 export interface IResultadoModel {
@@ -40,13 +40,15 @@ export const calcDiff = (start: Date, end: Date): number => {
     return (d - s) as number;
 }
 
-export const maskTime = (diff: number) => {
+export const maskTime = (diff: number, hideMiliseconds = false) => {
     var diffDate = new Date(diff);
 
     let segundos = diffDate.getSeconds();
     let minutos = diffDate.getMinutes();
+    let miliseconds = diffDate.getMilliseconds();
     let tm = '';
     let ts = '';
+    let ms = '';
 
     if (segundos < 10) {
         ts = `0${segundos}`;
@@ -60,5 +62,17 @@ export const maskTime = (diff: number) => {
         tm = `${minutos}`;
     }
 
-    return `${tm}:${ts}`;
+    if (miliseconds < 10) {
+        ms = `00${miliseconds}`;
+    } else if (miliseconds < 100) {
+        ms = `0${miliseconds}`;
+    } else {
+        ms = `${miliseconds}`;
+    }
+
+    if (hideMiliseconds) {
+        return `${tm}:${ts}`;
+    }else{
+        return `${tm}:${ts}:${ms}`;
+    }
 };

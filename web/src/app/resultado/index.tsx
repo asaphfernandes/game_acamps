@@ -1,6 +1,6 @@
 import React from 'react';
 import Topbar from '../ui/topbar';
-import { api, IEquipeModel } from '../utils';
+import { api, IEquipeModel, maskTime } from '../utils';
 import { ContentJss, EquipeJss, Lugar1Jss, Lugar2Jss, Lugar3Jss, RankingContainerJss } from './jss';
 
 const ResultadoView: React.FC = () => {
@@ -31,19 +31,19 @@ const ResultadoView: React.FC = () => {
                     <Lugar2Jss>
                         <h3>2º</h3>
                         <p>{equipe2.name}</p>
-                        <p>{equipe2.tempo}</p>
+                        <p>{maskTime(equipe2.tempo)}</p>
                     </Lugar2Jss>
 
                     <Lugar1Jss>
                         <h3>1º</h3>
                         <p>{equipe1.name}</p>
-                        <p>{equipe1.tempo}</p>
+                        <p>{maskTime(equipe1.tempo)}</p>
                     </Lugar1Jss>
 
                     <Lugar3Jss>
                         <h3>3º</h3>
                         <p>{equipe3.name}</p>
-                        <p>{equipe3.tempo}</p>
+                        <p>{maskTime(equipe3.tempo)}</p>
                     </Lugar3Jss>
                 </>}
 
@@ -57,7 +57,7 @@ const ResultadoView: React.FC = () => {
                     return <EquipeJss key={equipe.name} className={`pos-${i}`}>
                         <span>{i+1}</span>
                         <span>{equipe.name}</span>
-                        <span>{equipe.tempo}</span>
+                        <span>{maskTime(equipe.tempo)}</span>
                         </EquipeJss>
                 })}
             </RankingContainerJss>

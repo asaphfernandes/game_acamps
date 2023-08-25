@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import ButtonUi from '../ui/button';
-import { api, IProvaModel, IResultadoModel, LS } from '../utils';
+import { api, IProvaModel, IResultadoModel, LS, maskTime } from '../utils';
 import { EquipeStageJss, EquipeContainerJss, StartContainerJss, TransmitirContainerJss, EquipeJss, EquipeHeaderJss } from './jss';
 
 interface IEquipeProps {
@@ -15,19 +15,20 @@ const Equipe: React.FC<IEquipeProps> = ({
 }) => {
 
     const handleModel = () => {
-        if(!!resultado.timeMiliseconds) return;
+        if (!!resultado.timeMiliseconds) return;
         isMudar ? setModel(undefined) : setModel(resultado);
     };
 
     return (<EquipeJss>
         <EquipeHeaderJss>
-            <b>{resultado.equipeNome}</b>
-            <b>{resultado.equipeLider}</b>
+            <h3>{resultado.equipeNome}</h3>
+            {resultado.timeMiliseconds && <span className='display'>{maskTime(resultado.timeMiliseconds)}</span>}
+            <span>{resultado.equipeLider}</span>
+
         </EquipeHeaderJss>
 
-        <ButtonUi onClick={handleModel} disabled={!!resultado.timeMiliseconds}>
-            {isMudar ? 'Mudar' : 'Escolher'}
-        </ButtonUi>
+        {!resultado.timeMiliseconds && isMudar && <ButtonUi onClick={handleModel}>Mudar</ButtonUi>}
+        {!resultado.timeMiliseconds && !isMudar && <ButtonUi onClick={handleModel}>Escolher</ButtonUi>}
     </EquipeJss>)
 };
 
@@ -47,9 +48,10 @@ const CompetirEquipeView: React.FC = () => {
 
     const resultados = JSON.parse(localStorage.getItem(LS.RESULTADOS) || '{}') as IResultadoModel[];
 
-    const handleStart = React.useCallback(() => {
-        localStorage.setItem(LS.EQUIPE_1, JSON.stringify(equipeEsquerda));
-        localStorage.setItem(LS.EQUIPE_2, JSON.stringify(equipeDireita));
+    const toCronometro = React.useCallback(() => {
+        if (!equipeEsquerda || !equipeDireita) return;
+        localStorage.setItem(LS.EQUIPE_1, equipeEsquerda.id);
+        localStorage.setItem(LS.EQUIPE_2, equipeDireita.id);
         history.push('/competir/cronometro');
     }, [history, equipeEsquerda, equipeDireita]);
 
@@ -61,13 +63,16 @@ const CompetirEquipeView: React.FC = () => {
     const handleTransmitir = React.useCallback(() => {
         var resultadoStorage = localStorage.getItem(LS.RESULTADOS);
         if (resultadoStorage) {
-            var request = JSON.parse(resultadoStorage);
+            var request = {
+                provaNome: prova.name,
+                equipes: JSON.parse(resultadoStorage)
+            };
             api.post('/api/resultado/transmitir', request)
                 .then((response) => {
                     handleMudarProva();
                 });
         }
-    }, [handleMudarProva]);
+    }, [handleMudarProva, prova.name]);
 
     return (<>
         <h1>
@@ -75,7 +80,7 @@ const CompetirEquipeView: React.FC = () => {
         </h1>
 
         <EquipeContainerJss>
-                <h3>Equipe esquerda</h3>
+            <h3>Equipe esquerda</h3>
             <EquipeStageJss>
                 {equipeEsquerda && <Equipe resultado={equipeEsquerda} setModel={setEquipeEsquerda} isMudar />}
                 {!equipeEsquerda && resultados.map((resultado) => {
@@ -86,17 +91,17 @@ const CompetirEquipeView: React.FC = () => {
             {equipeEsquerda && <>
                 <h3>Equipe direita</h3>
                 <EquipeStageJss>
-                {equipeDireita && <Equipe resultado={equipeDireita} setModel={setEquipeDireita} isMudar />}
-                {!equipeDireita && resultados.filter(w => w.equipeNome !== equipeEsquerda.equipeNome).map((resultado) => {
-                    return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeDireita} />);
-                })}
-            </EquipeStageJss>
+                    {equipeDireita && <Equipe resultado={equipeDireita} setModel={setEquipeDireita} isMudar />}
+                    {!equipeDireita && resultados.filter(w => w.equipeNome !== equipeEsquerda.equipeNome).map((resultado) => {
+                        return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeDireita} />);
+                    })}
+                </EquipeStageJss>
             </>}
         </EquipeContainerJss>
 
 
         <StartContainerJss>
-            <ButtonUi disabled={!equipeEsquerda || !equipeDireita} onClick={handleStart}>Start</ButtonUi>
+            <ButtonUi disabled={!equipeEsquerda || !equipeDireita} onClick={toCronometro}>Competir</ButtonUi>
         </StartContainerJss>
 
         <TransmitirContainerJss>

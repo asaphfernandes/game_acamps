@@ -10,7 +10,7 @@ namespace Api.Controllers.Resultados.Transmitir
 
     public class SubEquipe
     {
-      public string Name { get; set; }
+      public string EquipeNome { get; set; }
       public int TimeMiliseconds { get; set; }
       public int PenalidadeSeconds { get; set; }
     }

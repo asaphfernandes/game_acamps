@@ -15,14 +15,14 @@ namespace Api.Colletions
       EquipeNome = equipe.Name;
       EquipeLider = equipe.Lider;
       ProvaNome = prova.Name;
-      Tempo = prova.Tempo;
+      Tempo = prova.Tempo * 1000;
       Penalidade = 0;
     }
 
-    public void Update(int tempo, int punicao)
+    public void Update(int tempo, int punicaoSeconds)
     {
       Tempo = tempo;
-      Penalidade = punicao;
+      Penalidade = punicaoSeconds * 1000;
     }
   }
 }
