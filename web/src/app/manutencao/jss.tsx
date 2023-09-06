@@ -20,3 +20,10 @@ export const ZerarJss = styled('div')({
     display: 'flex',
     justifyContent: 'center'
 });
+
+export const ResultadoJss = styled('li')({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 700
+});

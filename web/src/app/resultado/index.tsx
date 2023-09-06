@@ -1,7 +1,7 @@
 import React from 'react';
 import Topbar from '../ui/topbar';
 import { api, IEquipeModel, maskTime } from '../utils';
-import { ContentJss, EquipeJss, Lugar1Jss, Lugar2Jss, Lugar3Jss, RankingContainerJss } from './jss';
+import { ContentJss, EquipeJss, RankingContainerJss } from './jss';
 
 interface IEquipeProps {
     model: IEquipeModel;

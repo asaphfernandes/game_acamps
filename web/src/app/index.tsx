@@ -8,6 +8,7 @@ import ProvaView from './prova';
 import CompetirEquipeView from './competir/equipe';
 import CompetirCronometroView from './competir/cronometro';
 import ManutencaoView from './manutencao';
+import ResultadoGerenciarView from './manutencao/gerenciar';
 
 const HomeView: React.FC = () => {
   const opcoes = ["Resultado", "Prova", "Equipe", "Manutencao"];
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         <Route exact path='/equipe' component={EquipeView} />
         <Route exact path='/prova' component={ProvaView} />
         <Route exact path='/manutencao' component={ManutencaoView} />
+        <Route exact path='/manutencao/gerenciar/:nome' component={ResultadoGerenciarView} />
       </Switch>
     </Suspense>
 

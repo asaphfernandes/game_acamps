@@ -3,8 +3,11 @@ import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
 import { api, IProvaModel } from '../utils';
 import { ContainerJss, ManutencaoJss, ZerarJss } from './jss';
+import { useHistory } from 'react-router-dom';
 
 const ManutencaoView: React.FC = () => {
+    const history = useHistory();
+    
     const [models, setModels] = React.useState<IProvaModel[]>([]);
 
     const load = React.useCallback(() => {
@@ -16,9 +19,9 @@ const ManutencaoView: React.FC = () => {
 
     React.useEffect(load, [load]);
 
-    const handleEdit = React.useCallback((id: string) => {
-
-    }, []);
+    const handleEdit = React.useCallback((name: string) => {
+        history.push(`/manutencao/gerenciar/${name}`);
+    }, [history]);
 
     const handleZerar = React.useCallback(() => {
         api.post('/api/resultado/zerar');
@@ -30,7 +33,7 @@ const ManutencaoView: React.FC = () => {
             {models.map((model) => {
                 return (<ManutencaoJss key={model.id} >
                     Nome: {model.name} - Tempo: {model.tempo}s - Punição: {model.punicao}s
-                    <ButtonUi variant='default' onClick={() => { handleEdit(model.id); }}>Gerenciar</ButtonUi>
+                    <ButtonUi variant='default' onClick={() => { handleEdit(model.name); }}>Gerenciar</ButtonUi>
                 </ManutencaoJss>)
             })}
         </ContainerJss>
