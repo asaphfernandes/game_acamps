@@ -32,6 +32,9 @@ export interface IResultadoModel {
     equipeLider: string;
     penalidadeSeconds: number;
     timeMiliseconds?: number;
+
+    tempo: number;
+    punicao: number;
 }
 
 export const calcDiff = (start: Date, end: Date): number => {

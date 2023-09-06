@@ -25,5 +25,7 @@ export const ResultadoJss = styled('li')({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
     width: 700
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import ButtonUi from '../ui/button';
 import Topbar from '../ui/topbar';
-import { api, IProvaModel, IResultadoModel } from '../utils';
+import { api, IResultadoModel, maskTime } from '../utils';
 import { ContainerJss, ResultadoJss } from './jss';
 import { useParams } from 'react-router-dom';
 
@@ -9,14 +9,51 @@ interface IParam {
     nome: string;
 }
 
+interface IResultadoProps {
+    model: IResultadoModel;
+    onReload: () => void;
+}
+
+const Resultado: React.FC<IResultadoProps> = ({
+    model, onReload
+}) => {
+    const [tempo, setTempo] = React.useState<number>(model.tempo);
+    const [punicao, setPunicao] = React.useState<number>(model.punicao);
+
+    const handleUpdate = React.useCallback(() => {
+        let request: any = {
+            id: model.id,
+            tempo,
+            punicao
+        };
+
+        api.post('/api/resultado/manutencao', request)
+            .then((response) => {
+                onReload();
+            });
+    }, [model.id, onReload, punicao, tempo]);
+
+    const handleTempo = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setTempo(Number(event.target.value));
+    }, []);
+
+    const handlePunicao = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        setPunicao(Number(event.target.value));
+    }, []);
+
+    return (<ResultadoJss>
+        <input placeholder='Equipe' value={model.equipeNome} readOnly />
+        <input placeholder='Tempo milisegundos' value={tempo} onChange={handleTempo} />
+        <input placeholder='Punição segundos' value={punicao} onChange={handlePunicao} />
+        <span>{maskTime(tempo)}</span>
+        <ButtonUi onClick={handleUpdate}>Salvar</ButtonUi>
+    </ResultadoJss>)
+}
+
 const ResultadoGerenciarView: React.FC = () => {
     const { nome } = useParams<IParam>();
 
     const [models, setModels] = React.useState<IResultadoModel[]>([]);
-
-    const nameRef = React.useRef<HTMLInputElement>(null);
-    const tempoRef = React.useRef<HTMLInputElement>(null);
-    const punicaoRef = React.useRef<HTMLInputElement>(null);
 
     const load = React.useCallback(() => {
         api.get(`/api/resultado/manutencao/${nome}`)
@@ -24,68 +61,20 @@ const ResultadoGerenciarView: React.FC = () => {
                 setModels(response.data);
             });
     }, [nome]);
-
-    React.useEffect(() => {
-        if (tempoRef.current) {
-            tempoRef.current.value = "";
-        }
-
-        if (punicaoRef.current) {
-            punicaoRef.current.value = "";
-        }
-
-        if (nameRef.current) {
-            nameRef.current.value = "";
-            nameRef.current.focus();
-        }
-    }, [models]);
-
     React.useEffect(load, [load]);
-
-    const handleCreate = React.useCallback(() => {
-        let request: any = {};
-
-        if (nameRef.current) {
-            request.name = nameRef.current.value;
-        }
-
-        if (punicaoRef.current) {
-            request.punicao = parseInt(punicaoRef.current.value);
-        }
-
-        if (tempoRef.current) {
-            request.tempo = parseInt(tempoRef.current.value);
-        }
-
-        if (request.name) {
-            api.post('/api/prova', request)
-                .then((response) => {
-                    load();
-                });
-        }
-    }, [load]);
-
-    const handleUpdate = React.useCallback(() => {
-
-    }, [load]);
 
     return (<>
         <Topbar title='Prova' subtitle={nome} />
         <ContainerJss>
-            {models.map((model) => {
-                return (<ResultadoJss key={model.id} >
-                    <input ref={nameRef} placeholder='Equipe' value={model.equipeNome} readOnly />
-                    <input ref={tempoRef} placeholder='Tempo segundos' value={model.timeMiliseconds} />
-                    <input ref={punicaoRef} placeholder='Punição segundos' value={model.penalidadeSeconds} />
-                    <ButtonUi onClick={handleUpdate}>Salvar</ButtonUi>
-                </ResultadoJss>)
-            })}
             <ResultadoJss>
-                <input ref={nameRef} placeholder='Nome prova' />
-                <input ref={tempoRef} placeholder='Tempo segundos' />
-                <input ref={punicaoRef} placeholder='Punição segundos' />
-                <ButtonUi onClick={handleCreate}>Add</ButtonUi>
+                <input placeholder='Equipe' readOnly />
+                <input placeholder='Tempo milisegundos' readOnly />
+                <input placeholder='Punição segundos' readOnly />
+                <ButtonUi disabled onClick={() => { }}></ButtonUi>
             </ResultadoJss>
+            {models.map((model) => {
+                return (<Resultado key={model.id} model={model} onReload={load} />)
+            })}
         </ContainerJss>
     </>);
 };

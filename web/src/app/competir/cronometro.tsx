@@ -146,16 +146,16 @@ const CompetirCronometroView: React.FC = () => {
             return;
         }
 
+        let diff = calcDiff(start.current, new Date());
+        if(diff > (prova.tempo * 1000)) {
+            return;
+        }
+
         const resultadoStorage = localStorage.getItem(LS.RESULTADOS);
         if (resultadoStorage) {
             const resultados = JSON.parse(resultadoStorage) as IResultadoModel[];
 
             const equipeStorage = resultados.filter(w => w.id === equipe.id)[0];
-
-            let diff = calcDiff(start.current, new Date());
-            if(diff > (prova.tempo * 1000)) {
-                diff = prova.tempo * 1000;
-            }
 
             if (equipeStorage) {
                 if (equipeStorage.timeMiliseconds === undefined) {
