@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 
-const corLugar1 = '#FFFF00';
-const corLugar2 = '#8F9591';
+const corLugar1 = '#93930f';
+const corLugar2 = '#606263';
 const corLugar3 = '#B7701E';
 
 export const ContentJss = styled('div')({
@@ -48,12 +48,14 @@ export const RankingContainerJss = styled('ul')({
 })
 
 export const EquipeJss = styled('li')({
+    cursor: 'pointer',
     padding: '2px 8px',
 
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
+    fontSize: '1.2rem',
 
-    '&.pos-0': { backgroundColor: corLugar1, fontWeight: 700 },
-    '&.pos-1': { backgroundColor: corLugar2, fontWeight: 700 },
-    '&.pos-2': { backgroundColor: corLugar3, fontWeight: 700 },
+    '&.pos-1': { color: corLugar1, fontWeight: 800, fontSize: '1.8rem' },
+    '&.pos-2': { color: corLugar2, fontWeight: 600, fontSize: '1.6rem' },
+    '&.pos-3': { color: corLugar3, fontWeight: 600, fontSize: '1.4rem' },
 })

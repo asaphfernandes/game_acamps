@@ -18,7 +18,7 @@ namespace Api.Controllers.Resultados.Manutencao
 
     public async Task<List<Resultado>> GetAsync(string provaNome, CancellationToken cancellationToken)
     {
-      return await Context.Set<Resultado>().Find(w => w.ProvaNome == provaNome).ToListAsync(cancellationToken);
+      return await Context.Set<Resultado>().Find(w => w.ProvaNome == provaNome).SortBy(o => o.EquipeNome).ToListAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(RequestViewModel viewModel, CancellationToken cancellationToken)

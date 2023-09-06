@@ -3,6 +3,29 @@ import Topbar from '../ui/topbar';
 import { api, IEquipeModel, maskTime } from '../utils';
 import { ContentJss, EquipeJss, Lugar1Jss, Lugar2Jss, Lugar3Jss, RankingContainerJss } from './jss';
 
+interface IEquipeProps {
+    model: IEquipeModel;
+}
+
+const Equipe: React.FC<IEquipeProps> = ({ model }) => {
+    const [show, setShow] = React.useState(model.posicao > 10);
+
+    if (show) {
+        return (<EquipeJss className={`pos-${model.posicao}`}>
+            <span>{model.posicao}</span>
+            <span>{model.name}</span>
+            <span>{maskTime(model.tempo)}</span>
+        </EquipeJss>);
+    } else {
+        return (<EquipeJss className={`pos-${model.posicao}`}>
+            <span>{model.posicao}</span>
+            <span onClick={() => { setShow(true) }} >ver aquipe</span>
+            <span>{maskTime(model.tempo)}</span>
+        </EquipeJss>);
+    }
+
+};
+
 const ResultadoView: React.FC = () => {
     const [render, reRender] = React.useState(false);
     const [model, setModel] = React.useState<IEquipeModel[]>([]);
@@ -17,36 +40,9 @@ const ResultadoView: React.FC = () => {
 
     React.useEffect(load, [render, load]);
 
-    const equipe1: IEquipeModel | undefined = model.length >= 3 ? model[0] : undefined;
-    const equipe2: IEquipeModel | undefined = model.length >= 3 ? model[1] : undefined;
-    const equipe3: IEquipeModel | undefined = model.length >= 3 ? model[2] : undefined;
-
     return (<>
-        <Topbar title='Resultado' subtitle={"Teste"} />
+        <Topbar title='Resultado'/>
         <ContentJss>
-            {equipe1
-                && equipe2
-                && equipe3
-                && <>
-                    <Lugar2Jss>
-                        <h3>2º</h3>
-                        <p>{equipe2.name}</p>
-                        <p>{maskTime(equipe2.tempo)}</p>
-                    </Lugar2Jss>
-
-                    <Lugar1Jss>
-                        <h3>1º</h3>
-                        <p>{equipe1.name}</p>
-                        <p>{maskTime(equipe1.tempo)}</p>
-                    </Lugar1Jss>
-
-                    <Lugar3Jss>
-                        <h3>3º</h3>
-                        <p>{equipe3.name}</p>
-                        <p>{maskTime(equipe3.tempo)}</p>
-                    </Lugar3Jss>
-                </>}
-
             <RankingContainerJss>
                 <EquipeJss>
                     <label>Pos</label>
@@ -54,11 +50,7 @@ const ResultadoView: React.FC = () => {
                     <label>Tempo</label>
                 </EquipeJss>
                 {model.map((equipe, i) => {
-                    return <EquipeJss key={equipe.name} className={`pos-${i}`}>
-                        <span>{i+1}</span>
-                        <span>{equipe.name}</span>
-                        <span>{maskTime(equipe.tempo)}</span>
-                        </EquipeJss>
+                    return <Equipe key={equipe.name} model={equipe} />
                 })}
             </RankingContainerJss>
         </ContentJss>

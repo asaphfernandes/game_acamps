@@ -49,28 +49,47 @@ const CompetirEquipeView: React.FC = () => {
     const resultados = JSON.parse(localStorage.getItem(LS.RESULTADOS) || '{}') as IResultadoModel[];
 
     const toCronometro = React.useCallback(() => {
-        if (!equipeEsquerda || !equipeDireita) return;
-        localStorage.setItem(LS.EQUIPE_1, equipeEsquerda.id);
-        localStorage.setItem(LS.EQUIPE_2, equipeDireita.id);
+        if (!(!!equipeEsquerda || !!equipeDireita)) return;
+        equipeEsquerda && localStorage.setItem(LS.EQUIPE_1, equipeEsquerda.id);
+        equipeDireita && localStorage.setItem(LS.EQUIPE_2, equipeDireita.id);
         history.push('/competir/cronometro');
     }, [history, equipeEsquerda, equipeDireita]);
 
-    const handleMudarProva = React.useCallback(() => {
-        localStorage.removeItem(LS.PROVA);
-        history.push('/competir');
+    const handleMudarProva = React.useCallback((confirm: boolean) => {
+        function navigate() {
+            localStorage.removeItem(LS.PROVA);
+            history.push('/competir');
+        }
+
+        if (confirm) {
+            const msg = 'Deseja mudar de prova?\n\nIsso irá apagar os resultados atuais!';
+            if (window.confirm(msg)) {
+                navigate();
+            }
+        } else {
+            navigate();
+        }
     }, [history]);
 
     const handleTransmitir = React.useCallback(() => {
-        var resultadoStorage = localStorage.getItem(LS.RESULTADOS);
-        if (resultadoStorage) {
-            var request = {
-                provaNome: prova.name,
-                equipes: JSON.parse(resultadoStorage)
-            };
-            api.post('/api/resultado/transmitir', request)
-                .then((response) => {
-                    handleMudarProva();
-                });
+        function sendApi() {
+            var resultadoStorage = localStorage.getItem(LS.RESULTADOS);
+            if (resultadoStorage) {
+                var request = {
+                    provaNome: prova.name,
+                    equipes: JSON.parse(resultadoStorage)
+                };
+                api.post('/api/resultado/transmitir', request)
+                    .then((response) => {
+                        handleMudarProva(false);
+                    });
+            }
+        }
+
+        const msg = 'Deseja transmitir os resultados?\n\nInsira o nome do juiz responsável pela prova';
+        const nome = window.prompt(msg);
+        if (nome) {
+            sendApi();
         }
     }, [handleMudarProva, prova.name]);
 
@@ -101,12 +120,12 @@ const CompetirEquipeView: React.FC = () => {
 
 
         <StartContainerJss>
-            <ButtonUi disabled={!equipeEsquerda || !equipeDireita} onClick={toCronometro}>Competir</ButtonUi>
+            <ButtonUi disabled={!(!!equipeEsquerda || !!equipeDireita)} onClick={toCronometro}>Competir</ButtonUi>
         </StartContainerJss>
 
         <TransmitirContainerJss>
             <ButtonUi onClick={handleTransmitir}>Transmitir</ButtonUi>
-            <ButtonUi variant='secondary' onClick={handleMudarProva} >Mudar prova</ButtonUi>
+            <ButtonUi variant='secondary' onClick={() => { handleMudarProva(true) }} >Mudar prova</ButtonUi>
         </TransmitirContainerJss>
     </>);
 };

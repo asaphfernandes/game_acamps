@@ -53,12 +53,8 @@ const CompetirCronometroView: React.FC = () => {
     const [resultados, setResultado] = React.useState<IResultadoModel[]>([]);
 
     const start = React.useRef<Date>();
-
-    React.useEffect(() => {
-        setInterval(() => {
-            render(s => !s);
-        }, 1000);
-    }, []);
+    const diff = React.useRef<number>(0);
+    const interval = React.useRef<NodeJS.Timeout>(0 as any);
 
     const equipe1 = React.useRef<IResultadoModel>();
     const equipe2 = React.useRef<IResultadoModel>();
@@ -70,6 +66,21 @@ const CompetirCronometroView: React.FC = () => {
         }
         return {} as IProvaModel;
     }, []);
+
+
+    React.useEffect(() => {
+        interval.current = setInterval(() => {
+            if (start.current) {
+                const diff = calcDiff(start.current, new Date());
+                if (diff >= (prova.tempo * 1000)) {
+                    clearInterval(interval.current);
+                    return;
+                }
+            }
+
+            render(s => !s);
+        }, 1000);
+    }, [prova]);
 
     React.useEffect(() => {
         if (!resultados.length) {
@@ -116,7 +127,18 @@ const CompetirCronometroView: React.FC = () => {
     };
 
     const handleStart = () => {
-        start.current = new Date();
+        let now = new Date().getTime();
+        now -= diff.current;
+        start.current = new Date(now);
+    };
+
+    const handlePause = () => {
+        if (!start.current) {
+            return;
+        }
+
+        diff.current = calcDiff(start.current, new Date());
+        start.current = undefined;
     };
 
     const handleConcluir = (equipe: IResultadoModel) => {
@@ -146,28 +168,34 @@ const CompetirCronometroView: React.FC = () => {
     };
 
     const handleConcluirTodos = () => {
-        if (!start.current || !equipe1.current || !equipe2.current) {
-            return;
+        function concluir() {
+            if (!start.current || !equipe1.current || !equipe2.current) {
+                return;
+            }
+
+            const resultadoStorage = localStorage.getItem(LS.RESULTADOS);
+            if (resultadoStorage) {
+                const resultados = JSON.parse(resultadoStorage) as IResultadoModel[];
+
+                const equipe1Storage = resultados.filter(w => w.id === equipe1.current?.id)[0];
+                const equipe2Storage = resultados.filter(w => w.id === equipe2.current?.id)[0];
+
+                if (equipe1Storage && !equipe1Storage.timeMiliseconds) {
+                    equipe1Storage.timeMiliseconds = prova.tempo * 1000;
+                }
+
+                if (equipe2Storage && !equipe2Storage.timeMiliseconds) {
+                    equipe2Storage.timeMiliseconds = prova.tempo * 1000;
+                }
+
+                localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
+                history.push(urlVoltar);
+            }
         }
 
-        const resultadoStorage = localStorage.getItem(LS.RESULTADOS);
-        if (resultadoStorage) {
-            const resultados = JSON.parse(resultadoStorage) as IResultadoModel[];
-
-            const equipe1Storage = resultados.filter(w => w.id === equipe1.current?.id)[0];
-            const equipe2Storage = resultados.filter(w => w.id === equipe2.current?.id)[0];
-
-            let diff = 1000 * 60 * 5;
-
-            if (equipe1Storage && !equipe1Storage.timeMiliseconds) {
-                equipe1Storage.timeMiliseconds = diff;
-            }
-
-            if (equipe2Storage && !equipe2Storage.timeMiliseconds) {
-                equipe2Storage.timeMiliseconds = diff;
-            }
-
-            localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
+        const msg = 'Deseja finalizar a prova com esse tempo?';
+        if (window.confirm(msg)) {
+            concluir();
             history.push(urlVoltar);
         }
     };
@@ -184,7 +212,7 @@ const CompetirCronometroView: React.FC = () => {
             resultado1.timeMiliseconds = undefined;
             const resultado2 = resultados.filter(w => w.id === equipe2.current?.id)[0];
             resultado2.timeMiliseconds = undefined;
-            
+
             localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
         }
 
@@ -199,7 +227,8 @@ const CompetirCronometroView: React.FC = () => {
             Competir {prova.name}
         </CronometroHeader>
 
-        {!start.current && <CronometroTimerJss>Cronômetro não inciado</CronometroTimerJss>}
+        {!start.current && diff.current === 0 && <CronometroTimerJss>Cronômetro não inciado</CronometroTimerJss>}
+        {!start.current && diff.current > 0 && <CronometroTimerJss>{maskTime(diff.current, true)}</CronometroTimerJss>}
         {start.current && <CronometroTimerJss>{maskTime(calcDiff(start.current, new Date()), true)}</CronometroTimerJss>}
 
         <CronometroEquipeJss>
@@ -209,6 +238,7 @@ const CompetirCronometroView: React.FC = () => {
 
         <ConcluirContainerJss>
             {!start.current && <ButtonUi onClick={handleStart}>Start</ButtonUi>}
+            {start.current && <ButtonUi variant='delete' onClick={handlePause}>Pausar</ButtonUi>}
             {start.current && <ButtonUi onClick={handleConcluirTodos}>Concluir</ButtonUi>}
             <ButtonUi variant='secondary' onClick={handleVoltar}>Voltar</ButtonUi>
         </ConcluirContainerJss>

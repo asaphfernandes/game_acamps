@@ -9,12 +9,12 @@ export const LS = {
 };
 
 export const api = axios.create({ baseURL: 'http://localhost:61393' })
-
+// export const api = axios.create({ baseURL: 'https://game-acamps.azurewebsites.net' })
 
 export interface IProvaModel {
     id: string;
     name: string;
-    tempo: string;
+    tempo: number;
     punicao: string;
 };
 
@@ -75,4 +75,5 @@ export const maskTime = (diff: number, hideMiliseconds = false) => {
     }else{
         return `${tm}:${ts}:${ms}`;
     }
+
 };
