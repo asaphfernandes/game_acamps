@@ -122,6 +122,8 @@ const CompetirCronometroView: React.FC = () => {
             }
 
             localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
+            localStorage.removeItem(LS.EQUIPE_1);
+            localStorage.removeItem(LS.EQUIPE_2);
             setResultado(resultados);
         }
     };

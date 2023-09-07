@@ -8,11 +8,13 @@ export const LS = {
     EQUIPE_2: 'equipe_2'
 };
 
-export const api = axios.create({ baseURL: 'http://localhost:61393' })
-// export const api = axios.create({ baseURL: 'https://game-acamps.azurewebsites.net' })
+// export const api = axios.create({ baseURL: 'http://localhost:61393' })
+export const api = axios.create({ baseURL: 'https://game-acamps.azurewebsites.net' })
 
 export interface IProvaModel {
     id: string;
+    tipo: number;
+    tipoNome: string;
     name: string;
     tempo: number;
     punicao: string;

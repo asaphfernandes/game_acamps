@@ -11,5 +11,7 @@ export const ProvaJss = styled('li')({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 700
+    alignItems: 'center',
+    gap: 16,
+    width: 700,
 });

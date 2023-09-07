@@ -5,30 +5,34 @@ import { api, IProvaModel, IResultadoModel, LS, maskTime } from '../utils';
 import { EquipeStageJss, EquipeContainerJss, StartContainerJss, TransmitirContainerJss, EquipeJss, EquipeHeaderJss } from './jss';
 
 interface IEquipeProps {
+    prova: IProvaModel;
     resultado: IResultadoModel;
     setModel: (model?: IResultadoModel) => void;
     isMudar?: boolean;
 }
 
 const Equipe: React.FC<IEquipeProps> = ({
-    resultado, setModel, isMudar
+    prova, resultado, setModel, isMudar
 }) => {
 
     const handleModel = () => {
-        if (!!resultado.timeMiliseconds) return;
+        if (!!resultado.timeMiliseconds && prova.tipo === 1) return;
         isMudar ? setModel(undefined) : setModel(resultado);
     };
 
     return (<EquipeJss>
         <EquipeHeaderJss>
             <h3>{resultado.equipeNome}</h3>
-            {resultado.timeMiliseconds && <span className='display'>{maskTime(resultado.timeMiliseconds)}</span>}
+            {prova.tipo === 1 && resultado.timeMiliseconds && <span className='display'>{maskTime(resultado.timeMiliseconds)}</span>}
+            {prova.tipo === 2 && resultado.timeMiliseconds && <span className='display'>{resultado.timeMiliseconds / 1000}</span>}
             <span>{resultado.equipeLider}</span>
 
         </EquipeHeaderJss>
 
-        {!resultado.timeMiliseconds && isMudar && <ButtonUi onClick={handleModel}>Mudar</ButtonUi>}
-        {!resultado.timeMiliseconds && !isMudar && <ButtonUi onClick={handleModel}>Escolher</ButtonUi>}
+        {isMudar
+            ? !resultado.timeMiliseconds && <ButtonUi onClick={handleModel}>Mudar</ButtonUi>
+            : (!resultado.timeMiliseconds || prova.tipo === 2) && <ButtonUi onClick={handleModel}>Escolher</ButtonUi>
+        }
     </EquipeJss>)
 };
 
@@ -52,8 +56,12 @@ const CompetirEquipeView: React.FC = () => {
         if (!(!!equipeEsquerda || !!equipeDireita)) return;
         equipeEsquerda && localStorage.setItem(LS.EQUIPE_1, equipeEsquerda.id);
         equipeDireita && localStorage.setItem(LS.EQUIPE_2, equipeDireita.id);
-        history.push('/competir/cronometro');
-    }, [history, equipeEsquerda, equipeDireita]);
+        if (prova.tipo === 1) {
+            history.push('/competir/cronometro');
+        } else {
+            history.push('/competir/score');
+        }
+    }, [equipeEsquerda, equipeDireita, prova.tipo, history]);
 
     const handleMudarProva = React.useCallback((confirm: boolean) => {
         function navigate() {
@@ -101,18 +109,18 @@ const CompetirEquipeView: React.FC = () => {
         <EquipeContainerJss>
             <h3>Equipe esquerda</h3>
             <EquipeStageJss>
-                {equipeEsquerda && <Equipe resultado={equipeEsquerda} setModel={setEquipeEsquerda} isMudar />}
+                {equipeEsquerda && <Equipe prova={prova} resultado={equipeEsquerda} setModel={setEquipeEsquerda} isMudar />}
                 {!equipeEsquerda && resultados.map((resultado) => {
-                    return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeEsquerda} />);
+                    return (<Equipe key={resultado.id} prova={prova} resultado={resultado} setModel={setEquipeEsquerda} />);
                 })}
             </EquipeStageJss>
 
             {equipeEsquerda && <>
                 <h3>Equipe direita</h3>
                 <EquipeStageJss>
-                    {equipeDireita && <Equipe resultado={equipeDireita} setModel={setEquipeDireita} isMudar />}
+                    {equipeDireita && <Equipe prova={prova} resultado={equipeDireita} setModel={setEquipeDireita} isMudar />}
                     {!equipeDireita && resultados.filter(w => w.equipeNome !== equipeEsquerda.equipeNome).map((resultado) => {
-                        return (<Equipe key={resultado.id} resultado={resultado} setModel={setEquipeDireita} />);
+                        return (<Equipe prova={prova} key={resultado.id} resultado={resultado} setModel={setEquipeDireita} />);
                     })}
                 </EquipeStageJss>
             </>}

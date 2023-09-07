@@ -15,7 +15,12 @@ namespace Api.Colletions
       EquipeNome = equipe.Name;
       EquipeLider = equipe.Lider;
       ProvaNome = prova.Name;
-      Tempo = prova.Tempo * 1000;
+
+      if (prova.Tipo == Prova.ETipo.Tempo)
+        Tempo = prova.Tempo * 1000;
+      else
+        Tempo = 0;
+
       Penalidade = 0;
     }
 

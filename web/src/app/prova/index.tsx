@@ -7,6 +7,7 @@ import { ContainerJss, ProvaJss } from './jss';
 const ProvaView: React.FC = () => {
     const [models, setModels] = React.useState<IProvaModel[]>([]);
 
+    const tipoRef = React.useRef<HTMLSelectElement>(null);
     const nameRef = React.useRef<HTMLInputElement>(null);
     const tempoRef = React.useRef<HTMLInputElement>(null);
     const punicaoRef = React.useRef<HTMLInputElement>(null);
@@ -19,6 +20,10 @@ const ProvaView: React.FC = () => {
     }, []);
 
     React.useEffect(() => {
+        if (tempoRef.current) {
+            tempoRef.current.value = "";
+        }
+
         if (tempoRef.current) {
             tempoRef.current.value = "";
         }
@@ -37,6 +42,10 @@ const ProvaView: React.FC = () => {
 
     const handleCreate = React.useCallback(() => {
         let request: any = {};
+
+        if(tipoRef.current){
+            request.tipo = parseInt(tipoRef.current.value);
+        }
 
         if(nameRef.current){
             request.name = nameRef.current.value;
@@ -70,11 +79,15 @@ const ProvaView: React.FC = () => {
         <ContainerJss>
             {models.map((model) => {
                 return (<ProvaJss key={model.id} >
-                    Nome: {model.name} - Tempo: {model.tempo}s - Punição: {model.punicao}s
+                    Tipo: {model.tipoNome}  - Nome: {model.name} - Tempo: {model.tempo}s - Punição: {model.punicao}s
                     <ButtonUi variant='delete' onClick={() => { handleDelete(model.id); }}>Delete</ButtonUi>
                 </ProvaJss>)
             })}
             <ProvaJss>
+                <select ref={tipoRef}>
+                    <option value='1'>Tempo</option>
+                    <option value='2'>Pontos</option>
+                </select>
                 <input ref={nameRef} placeholder='Nome prova' />
                 <input ref={tempoRef} placeholder='Tempo segundos' />
                 <input ref={punicaoRef} placeholder='Punição segundos' />

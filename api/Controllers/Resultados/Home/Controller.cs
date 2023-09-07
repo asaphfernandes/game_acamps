@@ -29,14 +29,23 @@ namespace Api.Controllers.Resultados.Home
 
       var updates = new List<Equipe>();
 
-      foreach(var equipe in equipes)
+      foreach (var equipe in equipes)
       {
         var equipeResultados = resultados.Where(w => w.EquipeNome == equipe.Name).ToList();
         int tempo = 0;
-        foreach(var equipeResultado in equipeResultados)
+        foreach (var equipeResultado in equipeResultados)
         {
-          tempo += equipeResultado.Tempo;
-          tempo += equipeResultado.Penalidade;
+          var prova = provas.FirstOrDefault(w => w.Name == equipeResultado.ProvaNome);
+
+          if (prova.Tipo == Prova.ETipo.Tempo)
+          {
+            tempo += equipeResultado.Tempo;
+            tempo += equipeResultado.Penalidade;
+          }
+          else
+          {
+            tempo -= equipeResultado.Tempo;
+          }
         }
 
         var isUpdate = equipe.UpdateTempo(tempo);
@@ -46,7 +55,7 @@ namespace Api.Controllers.Resultados.Home
 
       var equipePosicoes = equipes.OrderBy(o => o.Tempo).ToList();
       var posicao = 0;
-      foreach(var equipe in equipePosicoes)
+      foreach (var equipe in equipePosicoes)
       {
         var isUpdate = equipe.UpdatePosicao(++posicao);
 
@@ -54,7 +63,7 @@ namespace Api.Controllers.Resultados.Home
           updates.Add(equipe);
       }
 
-      foreach(var equipe in updates)
+      foreach (var equipe in updates)
         await Context.Set<Equipe>().ReplaceOneAsync(o => o.Id == equipe.Id, equipe, cancellationToken: cancellationToken);
 
       return Json(equipePosicoes);
