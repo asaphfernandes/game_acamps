@@ -122,8 +122,6 @@ const CompetirCronometroView: React.FC = () => {
             }
 
             localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
-            localStorage.removeItem(LS.EQUIPE_1);
-            localStorage.removeItem(LS.EQUIPE_2);
             setResultado(resultados);
         }
     };
@@ -149,7 +147,7 @@ const CompetirCronometroView: React.FC = () => {
         }
 
         let diff = calcDiff(start.current, new Date());
-        if(diff > (prova.tempo * 1000)) {
+        if (diff > (prova.tempo * 1000)) {
             return;
         }
 
@@ -174,7 +172,7 @@ const CompetirCronometroView: React.FC = () => {
 
     const handleConcluirTodos = () => {
         function concluir() {
-            if (!start.current || !equipe1.current || !equipe2.current) {
+            if (!start.current) {
                 return;
             }
 
@@ -182,18 +180,25 @@ const CompetirCronometroView: React.FC = () => {
             if (resultadoStorage) {
                 const resultados = JSON.parse(resultadoStorage) as IResultadoModel[];
 
-                const equipe1Storage = resultados.filter(w => w.id === equipe1.current?.id)[0];
-                const equipe2Storage = resultados.filter(w => w.id === equipe2.current?.id)[0];
+                if (equipe1.current) {
+                    const equipe1Storage = resultados.filter(w => w.id === equipe1.current?.id)[0];
 
-                if (equipe1Storage && !equipe1Storage.timeMiliseconds) {
-                    equipe1Storage.timeMiliseconds = prova.tempo * 1000;
+                    if (equipe1Storage && !equipe1Storage.timeMiliseconds) {
+                        equipe1Storage.timeMiliseconds = prova.tempo * 1000;
+                    }
                 }
 
-                if (equipe2Storage && !equipe2Storage.timeMiliseconds) {
-                    equipe2Storage.timeMiliseconds = prova.tempo * 1000;
+                if (equipe2.current) {
+                    const equipe2Storage = resultados.filter(w => w.id === equipe2.current?.id)[0];
+
+                    if (equipe2Storage && !equipe2Storage.timeMiliseconds) {
+                        equipe2Storage.timeMiliseconds = prova.tempo * 1000;
+                    }
                 }
 
                 localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
+                localStorage.removeItem(LS.EQUIPE_1);
+                localStorage.removeItem(LS.EQUIPE_2);
                 history.push(urlVoltar);
             }
         }
@@ -219,6 +224,8 @@ const CompetirCronometroView: React.FC = () => {
             resultado2.timeMiliseconds = undefined;
 
             localStorage.setItem(LS.RESULTADOS, JSON.stringify(resultados));
+            localStorage.removeItem(LS.EQUIPE_1);
+            localStorage.removeItem(LS.EQUIPE_2);
         }
 
         if (window.confirm(msg)) {
